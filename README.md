@@ -14,3 +14,5 @@ tasks are included.
 
 ## Progress
 
+08.03.22 Stage 1 completed - REST-Controller with 2 endpoints - setup of Spring web and security
+
