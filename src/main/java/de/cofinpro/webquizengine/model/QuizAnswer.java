@@ -5,6 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * DTO object representing a quiz answer as returned on a client's solution attempt.
+ * Instances are created in the QuizService.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

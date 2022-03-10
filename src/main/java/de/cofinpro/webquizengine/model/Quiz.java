@@ -1,28 +1,33 @@
 package de.cofinpro.webquizengine.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * DTO object representing a quiz.
+ * The solution is not displayed to clients who attempt to solve this quiz,
+ * therefore it is marked @JsonIgnore.
+ * Instances of quizzes are only created by the QuizGenerator.
+ */
+@NoArgsConstructor
 @Getter
 @Setter
 public class Quiz {
-    // all constant for now...
-    private static final String TITLE = "The Java Logo";
-    private static final String TEXT = "What is depicted on the Java logo?";
-    private static final String[] OPTIONS = new String[] {
-            "Robot", "Tea leaf", "Cup of coffee", "Bug" };
 
+    private int id;
     private String title;
     private String text;
     private String[] options;
+    @JsonIgnore
+    private int solution;
 
-    public int findCorrectSolution() {
-        return 2; // options array index, i.e. "Cup of Coffee"
-    }
-
-    public Quiz() {
-        this.title = TITLE;
-        this.text = TEXT;
-        this.options = OPTIONS;
+    Quiz(int id, QuizRequestBody quizRequestBody) {
+        this.id = id;
+        this.title = quizRequestBody.getTitle();
+        this.text = quizRequestBody.getText();
+        this.options = quizRequestBody.getOptions();
+        this.solution = quizRequestBody.getAnswer();
     }
 }
