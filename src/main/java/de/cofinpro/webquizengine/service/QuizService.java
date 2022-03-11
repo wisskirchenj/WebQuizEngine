@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 /**
  * Web service class, that bundles all the endpoint functionality (as of now) for the
  * WebQuizController REST-controller.
@@ -60,12 +62,13 @@ public class QuizService {
      * @param answer the answer option, that the user chose
      * @return a feedback message on correctness of answer option or a 404 NOT FOUND
      */
-    public ResponseEntity<QuizAnswer> returnSolveResponse(int id, int answer) {
+    public ResponseEntity<QuizAnswer> returnSolveResponse(int id, int[] answer) {
         Quiz quiz = quizGenerator.findQuizById(id);
         if (quiz == null) {
             throw new QuizNotFoundException("Invalid quiz id given!");
         }
-        if (answer == quiz.getSolution()) {
+        Arrays.sort(answer);
+        if (Arrays.equals(answer, quiz.getCorrectOptions())) {
             return ResponseEntity.ok(new QuizAnswer(true, "Cooooooorrect, oider!"));
         }
         return ResponseEntity.ok(new QuizAnswer(false, "Nöööööö !"));

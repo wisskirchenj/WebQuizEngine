@@ -16,4 +16,6 @@ tasks are included.
 
 08.03.22 Stage 1 completed - REST-Controller with 2 endpoints - setup of Spring web and security
 
-10.03.22 Stage 2 completed - more endpoints, Service and Exception, Integration- and concurrent Loadtest added
+10.03.22 Stage 2 completed - more endpoints, Service and Exception, Integration- and concurrent load test added
+
+11.03.22 Stage 3 completed - bean validations with javax.validations.* packages

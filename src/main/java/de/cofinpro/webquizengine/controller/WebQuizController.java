@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.Map;
+
 /**
  * RESTController-class offering the following endpoints:
  * GET api/quiz - display the standard Java Quiz
@@ -64,7 +67,7 @@ public class WebQuizController {
      * @return the queried quiz if available or a 404-HTTP response
      */
     @PostMapping("api/quizzes")
-    public Quiz createQuiz(@RequestBody QuizRequestBody quizRequestBody) {
+    public Quiz createQuiz(@Valid @RequestBody QuizRequestBody quizRequestBody) {
         return quizService.createQuiz(quizRequestBody);
     }
 
@@ -73,12 +76,12 @@ public class WebQuizController {
      * as request parameter - e.g.: api/quiz?answer=0, that corresponds to the solution option
      * the client chooses (starting with 0).
      * @param id the id of a quiz as path variable
-     * @param answer the id of a quiz as path variable
+     * @param answerEntry the id of a quiz as path variable
      * @return a boolean - string answer object QuizAnswer
      */
     @PostMapping("api/quizzes/{id}/solve")
     public ResponseEntity<QuizAnswer> answerQuiz(@PathVariable("id") int id,
-                                 @RequestParam("answer") int answer) {
-        return quizService.returnSolveResponse(id, answer);
+                                  @RequestBody Map.Entry<String, int[]> answerEntry) {
+        return quizService.returnSolveResponse(id, answerEntry.getValue());
     }
 }

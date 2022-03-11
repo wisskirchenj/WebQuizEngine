@@ -1,5 +1,7 @@
 package de.cofinpro.webquizengine.model;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
 /**
  * the special JavaQuiz that is created and injected to the REST controller on boot.
  * It is a singleton class and bean, declared in the WebQuizConfiguration. The
@@ -17,6 +19,6 @@ public final class JavaQuiz extends Quiz {
         this.setTitle(TITLE);
         this.setText(TEXT);
         this.setOptions(OPTIONS);
-        this.setSolution(2);
+        this.setCorrectOptions(new int[] {2});
     }
 }

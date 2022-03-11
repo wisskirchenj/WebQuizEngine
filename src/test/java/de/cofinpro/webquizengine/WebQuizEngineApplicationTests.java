@@ -61,13 +61,17 @@ class WebQuizEngineApplicationTests {
 
     @Test
     public void postApiQuizSuccess() throws Exception {
-        this.mockMvc.perform(post("/api/quizzes/0/solve?answer=2"))
+        String postBody = "{\"answer\": [2]}";
+        this.mockMvc.perform(post("/api/quizzes/0/solve").content(postBody)
+                        .contentType("application/json;charset=UTF-8"))
                 .andExpect(content().json("{\"success\":true,\"feedback\":\"Cooooooorrect, oider!\"}"));
     }
 
     @Test
     public void getApiQuizFailures() throws Exception {
-        this.mockMvc.perform(post("/api/quizzes/0/solve?answer=1"))
+        String postBody = "{\"answer\": []}";
+        this.mockMvc.perform(post("/api/quizzes/0/solve").content(postBody)
+                        .contentType("application/json;charset=UTF-8"))
                 .andExpect(content().json("{\"success\":false,\"feedback\":\"Nöööööö !\"}"));
     }
 
