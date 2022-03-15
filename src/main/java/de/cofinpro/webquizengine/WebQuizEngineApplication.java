@@ -9,5 +9,4 @@ public class WebQuizEngineApplication {
     public static void main(String[] args) {
         SpringApplication.run(WebQuizEngineApplication.class, args);
     }
-
 }

@@ -1,4 +1,4 @@
-package de.cofinpro.webquizengine.model;
+package de.cofinpro.webquizengine.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +14,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class QuizAnswer {
+
+    public static QuizAnswer correct() {
+        return new QuizAnswer(true, "Cooooooorrect, oider!");
+    }
+
+    public static QuizAnswer incorrect() {
+        return new QuizAnswer(false, "Nöööööö !");
+    }
 
     private boolean success;
     private String feedback;

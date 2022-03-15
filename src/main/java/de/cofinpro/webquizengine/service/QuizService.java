@@ -1,15 +1,13 @@
 package de.cofinpro.webquizengine.service;
 
-import de.cofinpro.webquizengine.model.Quiz;
-import de.cofinpro.webquizengine.model.QuizAnswer;
-import de.cofinpro.webquizengine.model.QuizGenerator;
-import de.cofinpro.webquizengine.model.QuizRequestBody;
+import de.cofinpro.webquizengine.persistence.Quiz;
+import de.cofinpro.webquizengine.controller.QuizAnswer;
+import de.cofinpro.webquizengine.persistence.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * Web service class, that bundles all the endpoint functionality (as of now) for the
@@ -18,10 +16,11 @@ import java.util.Arrays;
 @Service
 public class QuizService {
 
-    private final QuizGenerator quizGenerator;
+    private final QuizRepository quizRepository;
 
-    public QuizService(@Autowired QuizGenerator quizGenerator) {
-        this.quizGenerator = quizGenerator;
+    @Autowired
+    public QuizService(QuizRepository quizRepository) {
+        this.quizRepository = quizRepository;
     }
 
     /**
@@ -30,30 +29,30 @@ public class QuizService {
      * @return the quiz as retrieved from the QuizGenerator component or a 404 NOT FOUND
      */
     public ResponseEntity<Quiz> getQuizById(int id) {
-        Quiz quiz = quizGenerator.findQuizById(id);
-        if (quiz == null) {
-            throw new QuizNotFoundException("Invalid quiz id given!");
-        }
-        return new ResponseEntity<>(quiz, HttpStatus.OK);
+        return ResponseEntity.ok(findQuizByIdOrThrow(id));
+    }
+
+    private Quiz findQuizByIdOrThrow(long id) {
+        return quizRepository.findById(id).orElseThrow(QuizNotFoundException::new);
     }
 
     /**
      * service corresponding to GET endpoints "api/quizzes"
      * @return all quizzes from the QuizGenerator component
      */
-    public Quiz[] getQuizzes() {
-        return quizGenerator.getQuizzes();
+    public Iterable<Quiz> getQuizzes() {
+        return quizRepository.findAll();
     }
 
     /**
      * service corresponding to POST endpoints "api/quizzes".
      * calls the QuizGenerator with the QuizRequestBody to create this quiz
-     * @param quizRequestBody the QuizRequestBody DTO as received by POST
+     * @param quiz the quiz DTO as received by POST
      * @return the created quiz information - also displaying the id-key to client
      *
      */
-    public Quiz createQuiz(QuizRequestBody quizRequestBody) {
-        return quizGenerator.createQuiz(quizRequestBody);
+    public Quiz createQuiz(Quiz quiz) {
+        return quizRepository.save(quiz);
     }
 
     /**
@@ -62,15 +61,19 @@ public class QuizService {
      * @param answer the answer option, that the user chose
      * @return a feedback message on correctness of answer option or a 404 NOT FOUND
      */
-    public ResponseEntity<QuizAnswer> returnSolveResponse(int id, int[] answer) {
-        Quiz quiz = quizGenerator.findQuizById(id);
-        if (quiz == null) {
-            throw new QuizNotFoundException("Invalid quiz id given!");
+    public ResponseEntity<QuizAnswer> returnSolveResponse(int id, List<Integer> answer) {
+        Quiz quiz = findQuizByIdOrThrow(id);
+        if (containsSameElements(answer, quiz.getAnswer())) {
+            return ResponseEntity.ok(QuizAnswer.correct());
         }
-        Arrays.sort(answer);
-        if (Arrays.equals(answer, quiz.getCorrectOptions())) {
-            return ResponseEntity.ok(new QuizAnswer(true, "Cooooooorrect, oider!"));
+        return ResponseEntity.ok(QuizAnswer.incorrect());
+    }
+
+    private boolean containsSameElements(List<Integer> answer, List<Integer> correctOptions) {
+        if (answer.size() != correctOptions.size()) {
+            return false;
         }
-        return ResponseEntity.ok(new QuizAnswer(false, "Nöööööö !"));
+        answer.removeAll(correctOptions);
+        return answer.size() == 0;
     }
 }

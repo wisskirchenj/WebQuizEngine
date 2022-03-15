@@ -18,7 +18,7 @@ public class CreateLoadTestResultHandler implements ResultHandler {
     public void handle(MvcResult result) throws Exception {
         String contentJson = result.getResponse().getContentAsString();
         System.out.println( contentJson.substring(contentJson.lastIndexOf("\"id\":")));
-        assertTrue(contentJson.contains("\"id\":" + numberOfPosts));
-        assertFalse(contentJson.contains("\"id\":" + (numberOfPosts + 1)));
+        assertTrue(contentJson.contains("\"id\":" + (numberOfPosts + 1)));
+        assertFalse(contentJson.contains("\"id\":" + (numberOfPosts + 2)));
     }
 }

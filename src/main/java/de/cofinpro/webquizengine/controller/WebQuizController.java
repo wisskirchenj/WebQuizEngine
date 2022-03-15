@@ -1,15 +1,13 @@
 package de.cofinpro.webquizengine.controller;
 
-import de.cofinpro.webquizengine.model.JavaQuiz;
-import de.cofinpro.webquizengine.model.Quiz;
-import de.cofinpro.webquizengine.model.QuizAnswer;
-import de.cofinpro.webquizengine.model.QuizRequestBody;
+import de.cofinpro.webquizengine.persistence.Quiz;
 import de.cofinpro.webquizengine.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,20 +22,20 @@ import java.util.Map;
 public class WebQuizController {
 
     private final QuizService quizService;
-    private final JavaQuiz javaQuiz;
+    private final Quiz javaQuiz;
 
     @Autowired
-    public WebQuizController(QuizService quizService, JavaQuiz javaQuiz) {
+    public WebQuizController(QuizService quizService, Quiz javaQuiz) {
         this.quizService = quizService;
         this.javaQuiz = javaQuiz;
     }
 
     /**
      * GET-endpoint "api/quiz", that returns the one and only predefined Java quiz
-     * @return th JavaQuiz which is dependency injected
+     * @return the JavaQuiz which is dependency injected
      */
     @GetMapping("api/quiz")
-    public JavaQuiz getQuiz() {
+    public Quiz getQuiz() {
         return this.javaQuiz;
     }
 
@@ -46,7 +44,7 @@ public class WebQuizController {
      * @return an array of all quiz objects created in this session starting with the Java quiz
      */
     @GetMapping("api/quizzes")
-    public Quiz[] getQuizzes() {
+    public Iterable<Quiz> getQuizzes() {
         return quizService.getQuizzes();
     }
 
@@ -62,13 +60,14 @@ public class WebQuizController {
     }
 
     /**
-     * POST endpoint "api/quizzes" - receives data to create a new quiz in the ResponseBody and
-     * displays it with the id information from creation
+     * POST endpoint "api/quizzes" - receives and validates data to create a new quiz in the
+     * ResponseBody and displays it with the id information from creation
+     * @param quiz the creation data received
      * @return the queried quiz if available or a 404-HTTP response
      */
     @PostMapping("api/quizzes")
-    public Quiz createQuiz(@Valid @RequestBody QuizRequestBody quizRequestBody) {
-        return quizService.createQuiz(quizRequestBody);
+    public Quiz createQuiz(@Valid @RequestBody Quiz quiz) {
+        return quizService.createQuiz(quiz);
     }
 
     /**
@@ -76,12 +75,13 @@ public class WebQuizController {
      * as request parameter - e.g.: api/quiz?answer=0, that corresponds to the solution option
      * the client chooses (starting with 0).
      * @param id the id of a quiz as path variable
-     * @param answerEntry the id of a quiz as path variable
+     * @param answerEntry the request body key:value data, consisting of an int array with valid
+     *                    options for the quiz to solve as value
      * @return a boolean - string answer object QuizAnswer
      */
     @PostMapping("api/quizzes/{id}/solve")
     public ResponseEntity<QuizAnswer> answerQuiz(@PathVariable("id") int id,
-                                  @RequestBody Map.Entry<String, int[]> answerEntry) {
+                                  @RequestBody Map.Entry<String, List<Integer>> answerEntry) {
         return quizService.returnSolveResponse(id, answerEntry.getValue());
     }
 }

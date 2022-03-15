@@ -2,6 +2,7 @@ package de.cofinpro.webquizengine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,7 +63,7 @@ class WebQuizEngineApplicationTests {
     @Test
     public void postApiQuizSuccess() throws Exception {
         String postBody = "{\"answer\": [2]}";
-        this.mockMvc.perform(post("/api/quizzes/0/solve").content(postBody)
+        this.mockMvc.perform(post("/api/quizzes/1/solve").content(postBody)
                         .contentType("application/json;charset=UTF-8"))
                 .andExpect(content().json("{\"success\":true,\"feedback\":\"Cooooooorrect, oider!\"}"));
     }
@@ -70,19 +71,19 @@ class WebQuizEngineApplicationTests {
     @Test
     public void getApiQuizFailures() throws Exception {
         String postBody = "{\"answer\": []}";
-        this.mockMvc.perform(post("/api/quizzes/0/solve").content(postBody)
+        this.mockMvc.perform(post("/api/quizzes/1/solve").content(postBody)
                         .contentType("application/json;charset=UTF-8"))
                 .andExpect(content().json("{\"success\":false,\"feedback\":\"Nöööööö !\"}"));
     }
 
-    @Test
+    @DisabledIfEnvironmentVariable(named = "load test", matches = "true")
     public void postApiCreateQuiz() throws Exception {
         if (doLoadTest) return;
         String postBody = String.format("{\"title\": \"Title%1$04d\"," +
                 "\"text\": \"Text%1$04d\",\"options\": [\"0\",\"1\",\"2\"], \"solution\":%1$d}", 1);
         mockMvc.perform(post("/api/quizzes").content(postBody).contentType("application/json;charset=UTF-8"))
                 .andDo(print()).andExpect(content()
-                        .json("{\"id\":1,\"title\":\"Title0001\",\"text\":\"Text0001\",\"options\":[\"0\",\"1\",\"2\"]}"));
+                        .json("{\"title\":\"Title0001\",\"text\":\"Text0001\",\"options\":[\"0\",\"1\",\"2\"]}"));
     }
 
     @Test
