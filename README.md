@@ -19,3 +19,5 @@ tasks are included.
 10.03.22 Stage 2 completed - more endpoints, Service and Exception, Integration- and concurrent load test added
 
 11.03.22 Stage 3 completed - bean validations with javax.validations.* packages
+
+15.03.22 Stage 4 completed - Spring Data JPA / Hibernate to a H2-database
