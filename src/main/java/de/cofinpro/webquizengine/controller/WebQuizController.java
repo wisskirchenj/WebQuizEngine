@@ -62,12 +62,12 @@ public class WebQuizController {
     /**
      * POST endpoint "api/quizzes" - receives and validates data to create a new quiz in the
      * ResponseBody and displays it with the id information from creation
-     * @param quiz the creation data received
+     * @param quizRequest the creation data received
      * @return the queried quiz if available or a 404-HTTP response
      */
     @PostMapping("api/quizzes")
-    public Quiz createQuiz(@Valid @RequestBody Quiz quiz) {
-        return quizService.createQuiz(quiz);
+    public Quiz createQuiz(@Valid @RequestBody QuizRequestBody quizRequest) {
+        return quizService.createQuiz(quizRequest);
     }
 
     /**

@@ -1,5 +1,6 @@
 package de.cofinpro.webquizengine.service;
 
+import de.cofinpro.webquizengine.controller.QuizRequestBody;
 import de.cofinpro.webquizengine.persistence.Quiz;
 import de.cofinpro.webquizengine.controller.QuizAnswer;
 import de.cofinpro.webquizengine.persistence.QuizRepository;
@@ -47,12 +48,12 @@ public class QuizService {
     /**
      * service corresponding to POST endpoints "api/quizzes".
      * calls the QuizGenerator with the QuizRequestBody to create this quiz
-     * @param quiz the quiz DTO as received by POST
+     * @param quizRequest the quiz DTO as received by POST
      * @return the created quiz information - also displaying the id-key to client
      *
      */
-    public Quiz createQuiz(Quiz quiz) {
-        return quizRepository.save(quiz);
+    public Quiz createQuiz(QuizRequestBody quizRequest) {
+        return quizRepository.save(quizRequest.toQuiz());
     }
 
     /**
@@ -74,6 +75,6 @@ public class QuizService {
             return false;
         }
         answer.removeAll(correctOptions);
-        return answer.size() == 0;
+        return answer.isEmpty();
     }
 }
