@@ -1,7 +1,9 @@
-package de.cofinpro.webquizengine.controller;
+package de.cofinpro.webquizengine.restapi.controller;
 
-import de.cofinpro.webquizengine.persistence.Quiz;
-import de.cofinpro.webquizengine.service.QuizService;
+import de.cofinpro.webquizengine.restapi.model.QuizAnswer;
+import de.cofinpro.webquizengine.restapi.model.QuizRequestBody;
+import de.cofinpro.webquizengine.restapi.model.QuizResponse;
+import de.cofinpro.webquizengine.restapi.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +24,10 @@ import java.util.Map;
 public class WebQuizController {
 
     private final QuizService quizService;
-    private final Quiz javaQuiz;
+    private final QuizResponse javaQuiz;
 
     @Autowired
-    public WebQuizController(QuizService quizService, Quiz javaQuiz) {
+    public WebQuizController(QuizService quizService, QuizResponse javaQuiz) {
         this.quizService = quizService;
         this.javaQuiz = javaQuiz;
     }
@@ -35,8 +37,8 @@ public class WebQuizController {
      * @return the JavaQuiz which is dependency injected
      */
     @GetMapping("api/quiz")
-    public Quiz getQuiz() {
-        return this.javaQuiz;
+    public QuizResponse getQuiz() {
+        return javaQuiz;
     }
 
     /**
@@ -44,7 +46,7 @@ public class WebQuizController {
      * @return an array of all quiz objects created in this session starting with the Java quiz
      */
     @GetMapping("api/quizzes")
-    public Iterable<Quiz> getQuizzes() {
+    public List<QuizResponse> getQuizzes() {
         return quizService.getQuizzes();
     }
 
@@ -55,7 +57,7 @@ public class WebQuizController {
      * @return the queried quiz if available or a 404-HTTP response
      */
     @GetMapping("api/quizzes/{id}")
-    public ResponseEntity<Quiz> getQuizById(@PathVariable("id") int id) {
+    public ResponseEntity<QuizResponse> getQuizById(@PathVariable("id") int id) {
         return quizService.getQuizById(id);
     }
 
@@ -66,7 +68,7 @@ public class WebQuizController {
      * @return the queried quiz if available or a 404-HTTP response
      */
     @PostMapping("api/quizzes")
-    public Quiz createQuiz(@Valid @RequestBody QuizRequestBody quizRequest) {
+    public QuizResponse createQuiz(@Valid @RequestBody QuizRequestBody quizRequest) {
         return quizService.createQuiz(quizRequest);
     }
 
@@ -81,7 +83,7 @@ public class WebQuizController {
      */
     @PostMapping("api/quizzes/{id}/solve")
     public ResponseEntity<QuizAnswer> answerQuiz(@PathVariable("id") int id,
-                                  @RequestBody Map.Entry<String, List<Integer>> answerEntry) {
+                                                 @RequestBody Map.Entry<String, List<Integer>> answerEntry) {
         return quizService.returnSolveResponse(id, answerEntry.getValue());
     }
 }

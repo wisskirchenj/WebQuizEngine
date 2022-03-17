@@ -2,11 +2,10 @@ package de.cofinpro.webquizengine.configuration;
 
 import de.cofinpro.webquizengine.persistence.Quiz;
 import de.cofinpro.webquizengine.persistence.QuizRepository;
+import de.cofinpro.webquizengine.restapi.model.QuizResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -29,17 +28,12 @@ public class WebQuizConfiguration {
      * @return the standard java quiz injected as start quiz
      */
     @Bean
-    public Quiz javaQuiz() {
+    public QuizResponse javaQuiz() {
         Quiz javaQuiz = new Quiz();
         javaQuiz.setTitle(Quiz.JAVA_QUIZ_TITLE);
         javaQuiz.setText(Quiz.JAVA_QUIZ_TEXT);
         javaQuiz.setOptions(Quiz.JAVA_QUIZ_OPTIONS);
         javaQuiz.setAnswer(List.of(2));
-        return quizRepository.save(javaQuiz);
-    }
-
-    @Bean
-    public PasswordEncoder getEncoder() {
-        return new BCryptPasswordEncoder();
+        return QuizResponse.fromQuiz(quizRepository.save(javaQuiz));
     }
 }

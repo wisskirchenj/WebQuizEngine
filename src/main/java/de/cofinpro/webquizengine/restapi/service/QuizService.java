@@ -1,14 +1,16 @@
-package de.cofinpro.webquizengine.service;
+package de.cofinpro.webquizengine.restapi.service;
 
-import de.cofinpro.webquizengine.controller.QuizRequestBody;
 import de.cofinpro.webquizengine.persistence.Quiz;
-import de.cofinpro.webquizengine.controller.QuizAnswer;
 import de.cofinpro.webquizengine.persistence.QuizRepository;
+import de.cofinpro.webquizengine.restapi.model.QuizAnswer;
+import de.cofinpro.webquizengine.restapi.model.QuizRequestBody;
+import de.cofinpro.webquizengine.restapi.model.QuizResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Web service class, that bundles all the endpoint functionality (as of now) for the
@@ -17,7 +19,7 @@ import java.util.*;
 @Service
 public class QuizService {
 
-    private final QuizRepository quizRepository;
+    private QuizRepository quizRepository;
 
     @Autowired
     public QuizService(QuizRepository quizRepository) {
@@ -29,8 +31,8 @@ public class QuizService {
      * @param id the queried quiz id
      * @return the quiz as retrieved from the QuizGenerator component or a 404 NOT FOUND
      */
-    public ResponseEntity<Quiz> getQuizById(int id) {
-        return ResponseEntity.ok(findQuizByIdOrThrow(id));
+    public ResponseEntity<QuizResponse> getQuizById(int id) {
+        return ResponseEntity.ok(QuizResponse.fromQuiz(findQuizByIdOrThrow(id)));
     }
 
     private Quiz findQuizByIdOrThrow(long id) {
@@ -41,8 +43,12 @@ public class QuizService {
      * service corresponding to GET endpoints "api/quizzes"
      * @return all quizzes from the QuizGenerator component
      */
-    public Iterable<Quiz> getQuizzes() {
-        return quizRepository.findAll();
+    public List<QuizResponse> getQuizzes() {
+        List<QuizResponse> quizzes = new ArrayList<>();
+        for (Quiz quiz : quizRepository.findAll()) {
+            quizzes.add(QuizResponse.fromQuiz(quiz));
+        }
+        return quizzes;
     }
 
     /**
@@ -52,8 +58,8 @@ public class QuizService {
      * @return the created quiz information - also displaying the id-key to client
      *
      */
-    public Quiz createQuiz(QuizRequestBody quizRequest) {
-        return quizRepository.save(quizRequest.toQuiz());
+    public QuizResponse createQuiz(QuizRequestBody quizRequest) {
+        return QuizResponse.fromQuiz(quizRepository.save(quizRequest.toQuiz()));
     }
 
     /**

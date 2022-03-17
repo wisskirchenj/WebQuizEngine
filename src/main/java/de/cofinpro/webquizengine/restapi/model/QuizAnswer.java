@@ -1,9 +1,8 @@
-package de.cofinpro.webquizengine.controller;
+package de.cofinpro.webquizengine.restapi.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * DTO object representing a quiz answer as returned on a client's solution attempt.
@@ -11,8 +10,7 @@ import lombok.Setter;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class QuizAnswer {
 
     public static QuizAnswer correct() {

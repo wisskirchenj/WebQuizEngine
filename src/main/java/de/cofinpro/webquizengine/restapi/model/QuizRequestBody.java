@@ -1,10 +1,9 @@
-package de.cofinpro.webquizengine.controller;
+package de.cofinpro.webquizengine.restapi.model;
 
 import de.cofinpro.webquizengine.persistence.Quiz;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -18,8 +17,7 @@ import java.util.List;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class QuizRequestBody {
 
     @NotEmpty
@@ -31,11 +29,10 @@ public class QuizRequestBody {
     private List<String> options;
     private List<Integer> answer;
 
-    public String toString() {
-        return "title: " + title + " text: " + text + " options:" + options
-                + " answer: " + answer;
-    }
-
+    /**
+     * map the DTO to a new persistence layer entity object.
+     * @return the entity quiz object
+     */
     public Quiz toQuiz() {
         Quiz quiz = new Quiz();
         quiz.setTitle(this.title);

@@ -1,10 +1,10 @@
 package de.cofinpro.webquizengine.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -12,10 +12,9 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
- * DTO object representing a quiz.
+ * Persistence layer entity object representing a quiz.
  * The solution is not displayed to clients who attempt to solve this quiz,
- * therefore it is marked @JsonIgnore.
- * Instances of quizzes are only created by the QuizGenerator.
+ * therefore the getter is marked @JsonIgnore.
  */
 @NoArgsConstructor
 @Getter
