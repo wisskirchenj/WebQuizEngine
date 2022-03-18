@@ -32,7 +32,7 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
                 .and().csrf().disable().httpBasic();
         http.authorizeRequests()
                 .mvcMatchers("/register").permitAll()
-                .mvcMatchers("/admin").hasRole("ADMIN")
+                .mvcMatchers("/admin**").hasRole("ADMIN")
                 .mvcMatchers("/", "/api/**").authenticated()
                 .and().csrf().disable().httpBasic().and().formLogin();
     }
