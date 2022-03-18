@@ -87,7 +87,7 @@ class WebQuizEngineApplicationTests {
     void postApiCreateQuizConcurrentLoadTest() throws Exception {
         if (!doLoadTest) return;
         final int numberOfThreads = 4;
-        final int createsPerThread = 200;
+        final int createsPerThread = 20;
         Thread[] clients = new Thread[numberOfThreads];
         Arrays.setAll(clients, i -> new QuizCreateRequesterThread(mockMvc, createsPerThread, header));
         Arrays.stream(clients).forEach(Thread::start);

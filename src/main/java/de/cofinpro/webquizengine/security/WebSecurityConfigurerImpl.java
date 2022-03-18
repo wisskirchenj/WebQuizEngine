@@ -32,9 +32,8 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
                 .and().csrf().disable().httpBasic();
         http.authorizeRequests()
                 .mvcMatchers("/register").permitAll()
-                .mvcMatchers("/register.html").permitAll()
-                .mvcMatchers("/admin.html").hasRole("ADMIN")
+                .mvcMatchers("/admin").hasRole("ADMIN")
                 .mvcMatchers("/", "/api/**").authenticated()
-                .and().csrf().disable().httpBasic();
+                .and().csrf().disable().httpBasic().and().formLogin();
     }
 }

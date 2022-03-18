@@ -1,7 +1,5 @@
 package de.cofinpro.webquizengine.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,16 +32,6 @@ public class Quiz {
     private List<String> options;
     @ElementCollection
     private List<Integer> answer;
-
-    @JsonIgnore
-    public List<Integer> getAnswer() {
-        return answer;
-    }
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    public void setAnswer(List<Integer> answer) {
-        this.answer = answer;
-    }
 
     public static final String JAVA_QUIZ_TITLE = "The Java Logo";
     public static final String JAVA_QUIZ_TEXT = "What is depicted on the Java logo?";
