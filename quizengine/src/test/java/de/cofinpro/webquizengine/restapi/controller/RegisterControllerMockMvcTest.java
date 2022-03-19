@@ -31,7 +31,7 @@ class RegisterControllerMockMvcTest {
     private final HttpHeaders header = new HttpHeaders();
 
     @BeforeAll
-    static void cleanDB() {
+    static void cleanDB() throws Exception {
         try {
             Files.deleteIfExists(Path.of("./src/test/resources/quizDB.mv.db"));
         } catch (IOException e) {

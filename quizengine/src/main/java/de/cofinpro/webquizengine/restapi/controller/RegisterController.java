@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @RestController
 public class RegisterController {
 
-    private final RegisterService registerService;
+    private RegisterService registerService;
 
     @Autowired
     public RegisterController(RegisterService registerService) {

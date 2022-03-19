@@ -78,7 +78,7 @@ class WebQuizEngineSecurityTests {
                 .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()));
     }
 
-    @Test
+    //@Test
     void shutdownForEverybody() throws Exception {
         mockMvc.perform(post("/actuator/shutdown")).andDo(print())
                 .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()));
