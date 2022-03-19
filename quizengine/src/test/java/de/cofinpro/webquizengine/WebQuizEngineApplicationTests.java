@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,7 +44,7 @@ class WebQuizEngineApplicationTests {
     @BeforeAll
     static void cleanDB() {
         try {
-            Files.deleteIfExists(Path.of("./quizengine/src/test/resources/quizDB.mv.db"));
+            Files.deleteIfExists(Path.of("./src/test/resources/quizDB.mv.db"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,7 +74,7 @@ class WebQuizEngineApplicationTests {
     }
 
     @Test
-    void postApiQuizSuccess() throws Exception {
+    void postApiQuizSolveSuccess() throws Exception {
         String postBody = "{\"answer\": [2]}";
         mockMvc.perform(post("/api/quizzes/1/solve").headers(header).content(postBody)
                         .contentType("application/json;charset=UTF-8"))
@@ -79,11 +82,19 @@ class WebQuizEngineApplicationTests {
     }
 
     @Test
-    void getApiQuizFailures() throws Exception {
-        String postBody = "{\"answer\": []}";
+    void postApiQuizSolveFailure() throws Exception {
+        String postBody = "{\"answer\": [0,1]}";
         mockMvc.perform(post("/api/quizzes/1/solve").headers(header).content(postBody)
                         .contentType("application/json;charset=UTF-8"))
                 .andExpect(content().json("{\"success\":false,\"feedback\":\"Nöööööö !\"}"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"{\"answer\": \"\"}", "{\"answer\": null}", "{}"})
+    void postApiQuizSolveInvalid(String postBody) throws Exception {
+        mockMvc.perform(post("/api/quizzes/1/solve").headers(header).content(postBody)
+                        .contentType("application/json;charset=UTF-8"))
+                .andExpect(status().isBadRequest());
     }
 
     @DisabledIfEnvironmentVariable(named = "doLoadTest", matches = "false")

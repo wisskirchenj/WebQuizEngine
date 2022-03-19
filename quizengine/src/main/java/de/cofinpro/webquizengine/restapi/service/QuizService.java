@@ -84,6 +84,9 @@ public class QuizService {
      * @return a feedback message on correctness of answer option or a 404 NOT FOUND
      */
     public ResponseEntity<QuizAnswer> returnSolveResponse(long id, List<Integer> answer) {
+        if (answer == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Quiz quiz = findQuizByIdOrThrow(id);
         if (containsSameElements(answer, quiz.getAnswer())) {
             return ResponseEntity.ok(QuizAnswer.correct());
