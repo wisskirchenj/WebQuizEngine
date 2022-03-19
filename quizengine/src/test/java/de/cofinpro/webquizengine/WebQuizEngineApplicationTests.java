@@ -41,7 +41,7 @@ class WebQuizEngineApplicationTests {
     @BeforeAll
     static void cleanDB() {
         try {
-            Files.deleteIfExists(Path.of("./src/test/resources/quizDB.mv.db"));
+            Files.deleteIfExists(Path.of("./quizengine/src/test/resources/quizDB.mv.db"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,7 +50,7 @@ class WebQuizEngineApplicationTests {
     @BeforeEach
     public void setup() {
         header = new HttpHeaders();
-        header.setBasicAuth("juergen", "secret");
+        header.setBasicAuth("admin@cofinpro.de", "topsecret");
     }
 
     @Test

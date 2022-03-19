@@ -1,5 +1,7 @@
 package de.cofinpro.webquizengine.security;
 
+import de.cofinpro.webquizengine.configuration.WebQuizConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -12,12 +14,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
 
+    private UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    public WebSecurityConfigurerImpl(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("juergen").password(getEncoder().encode("secret")).roles("USER")
-                .and().withUser("jonas").password(getEncoder().encode("topsecret")).roles("ADMIN")
+                .withUser(WebQuizConfiguration.USER_COFINPRO)
+                .password(getEncoder().encode(WebQuizConfiguration.USER_PASSWORD)).roles("USER")
+                .and().withUser(WebQuizConfiguration.ADMIN_COFINPRO)
+                .password(getEncoder().encode(WebQuizConfiguration.ADMIN_PASSWORD)).roles("ADMIN")
                 .and().passwordEncoder(getEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(getEncoder());
     }
 
     @Bean
@@ -31,7 +43,10 @@ public class WebSecurityConfigurerImpl extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(HttpMethod.POST,"/actuator/shutdown").permitAll()
                 .and().csrf().disable().httpBasic();
         http.authorizeRequests()
-                .mvcMatchers("/register").permitAll()
+                .mvcMatchers("/h2").permitAll()
+                .and().csrf().disable().headers().frameOptions().disable();
+        http.authorizeRequests()
+                .mvcMatchers("/api/register").permitAll()
                 .mvcMatchers("/admin**").hasRole("ADMIN")
                 .mvcMatchers("/", "/api/**").authenticated()
                 .and().csrf().disable().httpBasic().and().formLogin();

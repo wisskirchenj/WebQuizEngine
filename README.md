@@ -21,3 +21,6 @@ tasks are included.
 11.03.22 Stage 3 completed - bean validations with javax.validations.* packages
 
 15.03.22 Stage 4 completed - Spring Data JPA / Hibernate to a H2-database
+
+19.03.22 Stage 5 completed - Spring Security, Register-endpoint with Repo. Delete patch authenticated 
+for owned quizzes

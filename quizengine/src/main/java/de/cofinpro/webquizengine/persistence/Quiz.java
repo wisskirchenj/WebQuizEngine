@@ -1,40 +1,47 @@
 package de.cofinpro.webquizengine.persistence;
 
+import de.cofinpro.webquizengine.restapi.model.QuizPatchRequestBody;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
  * Persistence layer entity object representing a quiz.
- * The solution is not displayed to clients who attempt to solve this quiz,
- * therefore the getter is marked @JsonIgnore.
  */
 @NoArgsConstructor
 @Getter
 @Setter
+@Accessors(chain = true)
 @Entity
 public class Quiz {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long id;
-    @NotEmpty
+
+    private String username;
     private String title;
-    @NotEmpty
     private String text;
+
     @ElementCollection
-    @Size(min=2)
     private List<String> options;
+
     @ElementCollection
     private List<Integer> answer;
 
-    public static final String JAVA_QUIZ_TITLE = "The Java Logo";
-    public static final String JAVA_QUIZ_TEXT = "What is depicted on the Java logo?";
-    public static final List<String> JAVA_QUIZ_OPTIONS = List.of(
-            "Robot", "Tea leaf", "Cup of coffee", "Bug");
+    public Quiz applyPatchRequest(QuizPatchRequestBody quizPatchRequest) {
+        title = isNullOrBlank(quizPatchRequest.getTitle()) ? title : quizPatchRequest.getTitle();
+        text = isNullOrBlank(quizPatchRequest.getText()) ? text : quizPatchRequest.getText();
+        options = quizPatchRequest.getOptions() == null ? options : quizPatchRequest.getOptions();
+        answer  = quizPatchRequest.getAnswer() == null ? answer : quizPatchRequest.getAnswer();
+        return this;
+    }
+
+    private boolean isNullOrBlank(String string) {
+        return string == null || "".equals(string.trim());
+    }
 }
