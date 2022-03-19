@@ -1,12 +1,16 @@
 package de.cofinpro.webquizengine.restapi.service;
 
+import de.cofinpro.webquizengine.configuration.WebQuizConfiguration;
 import de.cofinpro.webquizengine.persistence.Quiz;
 import de.cofinpro.webquizengine.persistence.QuizRepository;
 import de.cofinpro.webquizengine.restapi.model.QuizAnswer;
+import de.cofinpro.webquizengine.restapi.model.QuizPatchRequestBody;
 import de.cofinpro.webquizengine.restapi.model.QuizRequestBody;
 import de.cofinpro.webquizengine.restapi.model.QuizResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,11 +31,22 @@ public class QuizService {
     }
 
     /**
-     * service corresponding to GET endpoints "api/quiz" and "api/quizzes/{id}"
-     * @param id the queried quiz id
-     * @return the quiz as retrieved from the QuizGenerator component or a 404 NOT FOUND
+     * service corresponding to GET endpoints "api/quiz"
+     * @return the injected java quiz as retrieved from the QuizRepository
      */
-    public ResponseEntity<QuizResponse> getQuizById(int id) {
+    public ResponseEntity<QuizResponse> getJavaQuiz() {
+        return ResponseEntity.ok(QuizResponse.fromQuiz(
+                quizRepository.findByTitle(WebQuizConfiguration.JAVA_QUIZ_TITLE).orElseThrow()
+        ));
+
+    }
+
+    /**
+     * service corresponding to GET endpoint "api/quizzes/{id}"
+     * @param id the queried quiz id
+     * @return the quiz as retrieved from the QuizRepository or a 404 NOT FOUND
+     */
+    public ResponseEntity<QuizResponse> getQuizById(long id) {
         return ResponseEntity.ok(QuizResponse.fromQuiz(findQuizByIdOrThrow(id)));
     }
 
@@ -53,13 +68,13 @@ public class QuizService {
 
     /**
      * service corresponding to POST endpoints "api/quizzes".
-     * calls the QuizGenerator with the QuizRequestBody to create this quiz
+     * saves the quiz entity created from the quizRequest in the Quiz Repo.
      * @param quizRequest the quiz DTO as received by POST
      * @return the created quiz information - also displaying the id-key to client
-     *
      */
-    public QuizResponse createQuiz(QuizRequestBody quizRequest) {
-        return QuizResponse.fromQuiz(quizRepository.save(quizRequest.toQuiz()));
+    public QuizResponse createQuiz(QuizRequestBody quizRequest, String username) {
+        return QuizResponse.fromQuiz(quizRepository.save(
+                quizRequest.toQuiz().setUsername(username)));
     }
 
     /**
@@ -68,7 +83,7 @@ public class QuizService {
      * @param answer the answer option, that the user chose
      * @return a feedback message on correctness of answer option or a 404 NOT FOUND
      */
-    public ResponseEntity<QuizAnswer> returnSolveResponse(int id, List<Integer> answer) {
+    public ResponseEntity<QuizAnswer> returnSolveResponse(long id, List<Integer> answer) {
         Quiz quiz = findQuizByIdOrThrow(id);
         if (containsSameElements(answer, quiz.getAnswer())) {
             return ResponseEntity.ok(QuizAnswer.correct());
@@ -82,5 +97,41 @@ public class QuizService {
         }
         answer.removeAll(correctOptions);
         return answer.isEmpty();
+    }
+
+    /**
+     * service method to delete a quiz if owned by the user, with details given by the controller.
+     * if the quiz is not found - 404 is returned, if the quiz is not owned by the user - 403 is returned
+     * if everything fits and the quiz can be deleted 204 is returned
+     * @param id the id of a quiz as path variable
+     * @return an empty ResponseEntity with given HTTP-Status
+     */
+    public ResponseEntity<Object> deleteQuizById(long id, UserDetails userDetails) {
+        Quiz quiz = findQuizByIdOrThrow(id);
+        if (quiz.getUsername().equals(userDetails.getUsername())) {
+            quizRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+    /**
+     * service method to patch a quiz if it is owned by the user, with details given by the controller.
+     * if the quiz is not found - 404 is returned, if the quiz is not owned by the user - 403 is returned
+     * if everything fits and the quiz can be patched 200 is returned and the patched quiz is displayed
+     * @param id the id of a quiz as path variable
+     * @return the patched quiz if available or a 404- or 403-HTTP response
+     */
+    public ResponseEntity<QuizResponse> patchQuizById(long id, QuizPatchRequestBody quizPatchRequest,
+                                                      UserDetails userDetails) {
+        Quiz quiz = findQuizByIdOrThrow(id);
+        if (quiz.getUsername().equals(userDetails.getUsername())) {
+
+            quizRepository.save(quiz.applyPatchRequest(quizPatchRequest));
+            return ResponseEntity.ok(QuizResponse.fromQuiz(quiz));
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 }
