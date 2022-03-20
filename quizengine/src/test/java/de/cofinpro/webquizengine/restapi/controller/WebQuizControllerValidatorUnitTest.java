@@ -1,24 +1,24 @@
 package de.cofinpro.webquizengine.restapi.controller;
 
+import de.cofinpro.webquizengine.restapi.model.QuizPatchRequestBody;
 import de.cofinpro.webquizengine.restapi.model.QuizRequestBody;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WebQuizControllerValidatorUnitTest {
 
-    private QuizRequestBody getValidQuizRequest() {
+    final JPAUnitTestValidator<QuizRequestBody> quizValidator = new JPAUnitTestValidator<>(this::getValidQuizRequest);
+    final JPAUnitTestValidator<QuizPatchRequestBody> patchValidator
+            = new JPAUnitTestValidator<>(this::getValidQuizPatchRequest);
+
+    QuizRequestBody getValidQuizRequest() {
         return new QuizRequestBody("The quiz tile",
                 "The text - Which are correct?",
                 List.of("option 1", "option 2", "option 3"),
@@ -26,7 +26,13 @@ class WebQuizControllerValidatorUnitTest {
         );
     }
 
-    private static Stream<Arguments> provideFieldAndValidValue() {
+    @ParameterizedTest
+    @MethodSource("provideFieldAndValidValueQuizRequest")
+    void createQuizValidRequests(String fieldName, Object validValue) throws Exception {
+        assertTrue(quizValidator.validate(fieldName, validValue).isEmpty());
+    }
+
+    static Stream<Arguments> provideFieldAndValidValueQuizRequest() {
         return Stream.of(
                 Arguments.of("title", " some normal !"),
                 Arguments.of("title", " "),
@@ -43,23 +49,12 @@ class WebQuizControllerValidatorUnitTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideFieldAndValidValue")
-    void createQuizValidRequests(String fieldName, Object validValue) throws Exception {
-        QuizRequestBody quizRequest = getValidQuizRequest();
-
-        Field field = QuizRequestBody.class.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(quizRequest, validValue);
-
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        final Validator validator = factory.getValidator();
-
-        Set<ConstraintViolation<QuizRequestBody>> constraintViolations =
-                validator.validate(quizRequest);
-        assertEquals(0, constraintViolations.size());
+    @MethodSource("provideFieldAndInvalidValueQuizRequest")
+    void createQuizInvalidRequests(String fieldName, Object invalidValue) throws Exception {
+        assertEquals(1, quizValidator.validate(fieldName, invalidValue).size());
     }
 
-    private static Stream<Arguments> provideFieldAndInvalidValue() {
+    static Stream<Arguments> provideFieldAndInvalidValueQuizRequest() {
         return Stream.of(
                 Arguments.of("title", ""),
                 Arguments.of("title", null),
@@ -70,25 +65,48 @@ class WebQuizControllerValidatorUnitTest {
         );
     }
 
+    QuizPatchRequestBody getValidQuizPatchRequest() {
+        return new QuizPatchRequestBody("New title",
+                "The new text. Choose:",
+                List.of("newopt 1", "newopt 2", "newopt 3"),
+                List.of(0,2) //answer
+        );
+    }
+
     @ParameterizedTest
-    @MethodSource("provideFieldAndInvalidValue")
-    void createQuizInvalidRequests(String fieldName, Object validValue) throws Exception {
-        QuizRequestBody quizRequest = getValidQuizRequest();
-
-        Field field = QuizRequestBody.class.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(quizRequest, validValue);
-
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        final Validator validator = factory.getValidator();
-
-        Set<ConstraintViolation<QuizRequestBody>> constraintViolations =
-                validator.validate(quizRequest);
-        assertEquals(1, constraintViolations.size());
+    @MethodSource("provideFieldAndValidValuePatchRequest")
+    void patchQuizValidRequest(String fieldName, Object validValue) throws Exception {
+        assertTrue(patchValidator.validate(fieldName, validValue).isEmpty());
     }
 
 
-    //@Test
-    void patchQuizById() {
+    static Stream<Arguments> provideFieldAndValidValuePatchRequest() {
+        return Stream.of(
+                Arguments.of("title", ""),
+                Arguments.of("title", null),
+                Arguments.of("text", null),
+                Arguments.of("text", ""),
+                Arguments.of("options", List.of("new option 1", "new option 2")),
+                Arguments.of("options", null),
+                Arguments.of("answer", null),
+                Arguments.of("answer", List.of()),
+                Arguments.of("answer", List.of(1,2,3,0))
+        );
     }
+
+
+    @ParameterizedTest
+    @MethodSource("provideFieldAndInvalidValuePatchRequest")
+    void patchQuizInvalidRequest(String fieldName, Object invalidValue) throws Exception {
+        assertEquals(1, patchValidator.validate(fieldName, invalidValue).size());
+    }
+
+
+    static Stream<Arguments> provideFieldAndInvalidValuePatchRequest() {
+        return Stream.of(
+                Arguments.of("options", List.of("new option 1")),
+                Arguments.of("options", List.of())
+        );
+    }
+
 }

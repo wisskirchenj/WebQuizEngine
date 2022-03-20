@@ -23,7 +23,7 @@ public class QuizCreateRequesterThread extends Thread {
         try {
             for (int i = 0; i < numberOfCreates; i++) {
                 postBody = String.format("{\"title\": \"Title%1$04d\"," +
-                        "\"text\": \"Text%1$04d\",\"options\": [\"0\",\"1\",\"2\"], \"solution\":%2$d}", i, this.getId() % 3);
+                        "\"text\": \"Text%1$04d\",\"options\": [\"o\",\"p\",\"q\"], \"answer\":[%2$d]}", i, this.getId() % 3);
                 mockMvc.perform(post("/api/quizzes").headers(header).content(postBody).contentType("application/json"));
             }
         } catch (Exception e) {

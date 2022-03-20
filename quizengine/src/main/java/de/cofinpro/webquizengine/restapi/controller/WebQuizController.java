@@ -97,7 +97,7 @@ public class WebQuizController {
      * if the quiz is not found - 404 is returned, if the quiz is not owned by the user - 403 is returned
      * if everything fits and the quiz can be deleted 204 is returned
      * @param id the id of a quiz as path variable
-     * @return the queried quiz if available or a 404-HTTP response
+     * @return the appropriate status code - no response body
      */
     @DeleteMapping("api/quizzes/{id}")
     public ResponseEntity<Object> deleteQuizById(@AuthenticationPrincipal UserDetails userDetails,
@@ -112,7 +112,7 @@ public class WebQuizController {
      * valid. if the quiz is not found - 404 is returned, if the quiz is not owned by the user - 403 is returned
      * if everything fits and the quiz can be patched 200 is returned and the patched quiz is displayed
      * @param id the id of a quiz as path variable
-     * @return the queried quiz if available or a 404-HTTP response
+     * @return the patched quiz if available and owned or an error status as above explained
      */
     @PatchMapping("api/quizzes/{id}")
     public ResponseEntity<QuizResponse> patchQuizById(@AuthenticationPrincipal UserDetails userDetails,

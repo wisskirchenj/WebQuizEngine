@@ -14,6 +14,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@Deprecated
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 class RegisterControllerMockitoTest {
@@ -37,7 +38,7 @@ class RegisterControllerMockitoTest {
     }
 
     /**
-     * not working !?!? -> validation not done...
+     * NOT WORKING (validation not done)-> direct controller call obviously prevents correct framework validator handling..
      */
     //@Test
     void registerUserInValidEmail() {

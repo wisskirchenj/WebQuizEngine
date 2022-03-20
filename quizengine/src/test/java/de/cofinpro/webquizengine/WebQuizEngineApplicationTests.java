@@ -1,15 +1,21 @@
 package de.cofinpro.webquizengine;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.cofinpro.webquizengine.configuration.WebQuizConfiguration;
+import de.cofinpro.webquizengine.restapi.model.QuizPatchRequestBody;
+import de.cofinpro.webquizengine.restapi.model.QuizRequestBody;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultHandler;
@@ -20,12 +26,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,8 +46,8 @@ class WebQuizEngineApplicationTests {
 
     @Autowired
     private MockMvc mockMvc;
-    private final boolean doLoadTest = true;
-    private HttpHeaders header;
+    private final HttpHeaders header = new HttpHeaders();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeAll
     static void cleanDB() {
@@ -52,8 +60,7 @@ class WebQuizEngineApplicationTests {
 
     @BeforeEach
     public void setup() {
-        header = new HttpHeaders();
-        header.setBasicAuth("admin@cofinpro.de", "topsecret");
+        header.setBasicAuth(WebQuizConfiguration.ADMIN_COFINPRO, WebQuizConfiguration.ADMIN_PASSWORD);
     }
 
     @Test
@@ -97,21 +104,11 @@ class WebQuizEngineApplicationTests {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisabledIfEnvironmentVariable(named = "doLoadTest", matches = "false")
-    void postApiCreateQuiz() throws Exception {
-        if (doLoadTest) return;
-        String postBody = String.format("{\"title\": \"Title%1$04d\"," +
-                "\"text\": \"Text%1$04d\",\"options\": [\"0\",\"1\",\"2\"], \"solution\":%1$d}", 1);
-        mockMvc.perform(post("/api/quizzes").content(postBody).headers(header).contentType("application/json;charset=UTF-8"))
-                .andDo(print()).andExpect(content()
-                        .json("{\"title\":\"Title0001\",\"text\":\"Text0001\",\"options\":[\"0\",\"1\",\"2\"]}"));
-    }
-
     @Test
+    @DisplayName("GET api/quizzes & create load tested")
     void postApiCreateQuizConcurrentLoadTest() throws Exception {
-        if (!doLoadTest) return;
         final int numberOfThreads = 4;
-        final int createsPerThread = 20;
+        final int createsPerThread = 25;
         Thread[] clients = new Thread[numberOfThreads];
         Arrays.setAll(clients, i -> new QuizCreateRequesterThread(mockMvc, createsPerThread, header));
         Arrays.stream(clients).forEach(Thread::start);
@@ -123,5 +120,56 @@ class WebQuizEngineApplicationTests {
         mockMvc.perform(get("/api/quizzes").headers(header)).andDo(resultHandler);
         // to satisfy Sonar - there are "real asserts" in the resultHandler
         assertNotNull(resultHandler);
+    }
+
+    @Test
+    void deleteQuizValid() throws Exception {
+        QuizRequestBody quizRequest =
+                new QuizRequestBody("quiz title", "the question", List.of("opt1","opt2"), List.of());
+
+        MockHttpServletResponse newQuizResponse = mockMvc.perform(post("/api/quizzes")
+                        .content(toJson(quizRequest)).headers(header).contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string(containsString("the question")))
+                .andReturn().getResponse();
+
+        mockMvc.perform(delete("/api/quizzes/%d".formatted(quizIdFromResponse(newQuizResponse)))
+                        .headers(header)).andExpect(status().is(204));
+    }
+
+    @Test
+    void deleteQuizInvalidNotOwner() throws Exception {
+        QuizRequestBody quizRequest = new QuizRequestBody("quiz title", "the question", List.of("opt1","opt2"), List.of());
+
+        MockHttpServletResponse newQuizResponse = mockMvc.perform(post("/api/quizzes")
+                        .content(toJson(quizRequest)).headers(header).contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string(containsString("the question")))
+                .andReturn().getResponse();
+
+        header.setBasicAuth(WebQuizConfiguration.USER_COFINPRO, WebQuizConfiguration.USER_PASSWORD);
+        mockMvc.perform(delete("/api/quizzes/%d".formatted(quizIdFromResponse(newQuizResponse)))
+                        .headers(header)).andExpect(status().is(403));
+    }
+
+    // valid patchQuiz and invalid request format tests already done in restapi.controller package !
+    @Test
+    void patchQuizInvalidNotOwner() throws Exception {
+        QuizPatchRequestBody patchRequest =
+                new QuizPatchRequestBody("new java quiz",  "question", List.of("opt1","opt2"), List.of());
+
+        header.setBasicAuth(WebQuizConfiguration.USER_COFINPRO, WebQuizConfiguration.USER_PASSWORD);
+        mockMvc.perform(patch("/api/quizzes/1")
+                        .content(toJson(patchRequest)).headers(header).contentType("application/json;charset=UTF-8"))
+                .andExpect(status().is(403));
+    }
+
+    private String toJson(Object obj) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(obj);
+    }
+
+    private long quizIdFromResponse(MockHttpServletResponse response) throws Exception {
+        Matcher regexMatcher = Pattern.compile("id\\s*\"\\s*:\\s*([0-9]+)\\s*,")
+                .matcher(response.getContentAsString());
+        assertTrue(regexMatcher.find());
+        return Integer.parseInt(regexMatcher.group(1));
     }
 }
