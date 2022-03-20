@@ -21,7 +21,7 @@ class RegisterControllerValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("provideFieldAndValidValue")
     void registerUserValidRequests(String fieldName, Object validValue) throws Exception {
-        assertTrue(validator.validate(fieldName, validValue).isEmpty());
+        assertTrue(validator.getConstraintViolationsOnUpdate(fieldName, validValue).isEmpty());
     }
 
     static Stream<Arguments> provideFieldAndValidValue() {
@@ -38,7 +38,7 @@ class RegisterControllerValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("provideFieldAndInvalidValue")
     void registerUserInvalidRequests(String fieldName, Object invalidValue) throws Exception {
-        assertEquals(1, validator.validate(fieldName, invalidValue).size());
+        assertEquals(1, validator.getConstraintViolationsOnUpdate(fieldName, invalidValue).size());
     }
 
     static Stream<Arguments> provideFieldAndInvalidValue() {

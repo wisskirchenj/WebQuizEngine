@@ -29,7 +29,7 @@ class WebQuizControllerValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("provideFieldAndValidValueQuizRequest")
     void createQuizValidRequests(String fieldName, Object validValue) throws Exception {
-        assertTrue(quizValidator.validate(fieldName, validValue).isEmpty());
+        assertTrue(quizValidator.getConstraintViolationsOnUpdate(fieldName, validValue).isEmpty());
     }
 
     static Stream<Arguments> provideFieldAndValidValueQuizRequest() {
@@ -51,7 +51,7 @@ class WebQuizControllerValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("provideFieldAndInvalidValueQuizRequest")
     void createQuizInvalidRequests(String fieldName, Object invalidValue) throws Exception {
-        assertEquals(1, quizValidator.validate(fieldName, invalidValue).size());
+        assertEquals(1, quizValidator.getConstraintViolationsOnUpdate(fieldName, invalidValue).size());
     }
 
     static Stream<Arguments> provideFieldAndInvalidValueQuizRequest() {
@@ -76,7 +76,7 @@ class WebQuizControllerValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("provideFieldAndValidValuePatchRequest")
     void patchQuizValidRequest(String fieldName, Object validValue) throws Exception {
-        assertTrue(patchValidator.validate(fieldName, validValue).isEmpty());
+        assertTrue(patchValidator.getConstraintViolationsOnUpdate(fieldName, validValue).isEmpty());
     }
 
 
@@ -98,7 +98,7 @@ class WebQuizControllerValidatorUnitTest {
     @ParameterizedTest
     @MethodSource("provideFieldAndInvalidValuePatchRequest")
     void patchQuizInvalidRequest(String fieldName, Object invalidValue) throws Exception {
-        assertEquals(1, patchValidator.validate(fieldName, invalidValue).size());
+        assertEquals(1, patchValidator.getConstraintViolationsOnUpdate(fieldName, invalidValue).size());
     }
 
 

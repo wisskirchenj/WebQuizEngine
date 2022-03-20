@@ -17,9 +17,10 @@ public class JPAUnitTestValidator<T> {
         this.getValidFunction = getValidObjectFunction;
     }
 
-    public Set<ConstraintViolation<T>> validate(String fieldName, Object value) throws Exception {
+    public Set<ConstraintViolation<T>> getConstraintViolationsOnUpdate(String fieldToUpdate, Object newValue)
+            throws Exception {
         T object = getValidFunction.get();
-        updateFieldByReflection(object, fieldName, value);
+        updateFieldByReflection(object, fieldToUpdate, newValue);
 
         return validator.validate(object);
     }
