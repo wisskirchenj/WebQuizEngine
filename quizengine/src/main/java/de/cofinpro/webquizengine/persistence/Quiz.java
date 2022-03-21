@@ -1,6 +1,5 @@
 package de.cofinpro.webquizengine.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.cofinpro.webquizengine.restapi.model.QuizPatchRequestBody;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,6 @@ public class Quiz {
     @SequenceGenerator(name = "quiz_generator", sequenceName = "quiz_sequence", initialValue = 0)
     private Long id;
 
-    @JsonIgnore //TODO nur für Hyperskill
     private String username;
     private String title;
     private String text;
@@ -34,7 +32,6 @@ public class Quiz {
     @ElementCollection
     private List<String> options;
 
-    @JsonIgnore //TODO nur für Hyperskill
     @ElementCollection
     private List<Integer> answer;
 
@@ -57,10 +54,9 @@ public class Quiz {
     /**
      * add a new completion to this quiz
      * @param quizCompletion the new completion to add to the quiz's completion list
-     * @return reference to this Quiz object
      */
     public void addCompletion(QuizCompletion quizCompletion) {
-        completions.add(quizCompletion);
+       completions.add(quizCompletion);
     }
 
     private boolean isNullOrBlank(String string) {

@@ -117,8 +117,12 @@ class WebQuizEngineApplicationTests {
             client.join();
         }
 
-        ResultHandler resultHandler = new CreateLoadTestResultHandler(numberOfThreads * createsPerThread);
-        mockMvc.perform(get("/api/quizzes").headers(header)).andDo(resultHandler);
+        int pages = numberOfThreads * createsPerThread / WebQuizConfiguration.QUIZ_PAGE_SIZE;
+        ResultHandler resultHandler = new CreateLoadTestResultHandler(WebQuizConfiguration.QUIZ_PAGE_SIZE + 1);
+        mockMvc.perform(get("/api/quizzes?page=%d".formatted(pages - 1)).headers(header)).andDo(resultHandler);
+
+        resultHandler = new CreateLoadTestResultHandler(1);
+        mockMvc.perform(get("/api/quizzes?page=%d".formatted(pages + 1)).headers(header)).andDo(resultHandler);
         // to satisfy Sonar - there are "real asserts" in the resultHandler
         assertNotNull(resultHandler);
     }

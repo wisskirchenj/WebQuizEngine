@@ -117,11 +117,11 @@ class ControllerValidationMockMvcTest {
         List<String> newOptions = List.of("new option 1", "new option 2", "new option 3");
         QuizPatchRequestBody patchRequest = new QuizPatchRequestBody("New Java Logo",
                 "New Question?", newOptions,  List.of(2));
-        mockMvc.perform(patch("/api/quizzes/1").headers(header)
+        mockMvc.perform(patch("/api/quizzes/0").headers(header)
                         .contentType(MediaType.APPLICATION_JSON).content(toJson(patchRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(toJson(
-                        new QuizResponse(1, "New Java Logo", "New Question?", newOptions))));
+                        new QuizResponse(0, "New Java Logo", "New Question?", newOptions))));
     }
 
     @Test

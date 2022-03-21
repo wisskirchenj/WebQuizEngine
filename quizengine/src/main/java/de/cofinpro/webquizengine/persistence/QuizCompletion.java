@@ -1,6 +1,5 @@
 package de.cofinpro.webquizengine.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,13 +20,11 @@ import java.time.LocalDateTime;
 @Entity
 public class QuizCompletion {
 
-    @JsonIgnore //TODO nur für Hyperskill
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "completion_id")
     private Long completionId;
 
-    @JsonIgnore //TODO nur für Hyperskill
     @Column(name = "username")
     private String completedByUsername;
 

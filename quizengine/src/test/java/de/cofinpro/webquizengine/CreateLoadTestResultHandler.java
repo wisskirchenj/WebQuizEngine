@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateLoadTestResultHandler implements ResultHandler {
 
-    private final int numberOfPosts;
+    private final int expectedTokens;
 
-    public CreateLoadTestResultHandler(int numberOfPosts) {
-        this.numberOfPosts = numberOfPosts;
+    public CreateLoadTestResultHandler(int expectedTokens) {
+        this.expectedTokens = expectedTokens;
     }
 
     /**
@@ -23,6 +23,6 @@ public class CreateLoadTestResultHandler implements ResultHandler {
     @Override
     public void handle(MvcResult result) throws Exception {
         String[] tokens = result.getResponse().getContentAsString().split("\\[\"o\",\"p\",\"q\"]");
-        assertEquals(numberOfPosts + 1, tokens.length);
+        assertEquals(expectedTokens, tokens.length);
     }
 }

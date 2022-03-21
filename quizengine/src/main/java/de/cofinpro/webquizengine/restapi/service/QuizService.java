@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -55,16 +56,6 @@ public class QuizService {
 
     private Quiz findQuizByIdOrThrow(long id) {
         return quizRepository.findById(id).orElseThrow(QuizNotFoundException::new);
-    }
-
-    /** TODO raus damit zum Schluss
-     * service corresponding to GET endpoints "api/quizzes"
-     * @return all quizzes from the Quiz repository
-     * @param page the page number to be displayed, starting from 0
-     */
-    public Page<Quiz> getQuizzesPage(Integer page) {
-        Pageable paging = PageRequest.of(page, WebQuizConfiguration.QUIZ_PAGE_SIZE);
-        return quizRepository.findAll(paging);
     }
 
     /**
@@ -162,21 +153,21 @@ public class QuizService {
         }
     }
 
-    public List<QuizCompletionResponse> getCompletions(Integer page) {
+    /**
+     * service corresponding to GET endpoints "api/quizzes"
+     * @return all quiz completions of this user as queried from the Quiz repository
+     * @param page the page number to be displayed, starting from 0
+     */
+    public List<QuizCompletionResponse> getCompletions(String username, Integer page) {
         List<QuizCompletionResponse> completions = new ArrayList<>();
 
-        Pageable paging = PageRequest.of(page, WebQuizConfiguration.QUIZ_PAGE_SIZE);
-        Page<QuizCompletion> pagedResult = completionRepository.findAll(paging);
+        Pageable paging = PageRequest.of(page, WebQuizConfiguration.QUIZ_PAGE_SIZE,
+                Sort.Direction.DESC, "completedAt");
+        Page<QuizCompletion> pagedResult = completionRepository.findAllUserCompletions(paging, username);
 
         for (QuizCompletion completion : pagedResult.getContent()) {
             completions.add(QuizCompletionResponse.fromQuizCompletion(completion));
         }
         return completions;
     }
-
-    public Page<QuizCompletion> getCompletionsPage(Integer page) {
-        Pageable paging = PageRequest.of(page, WebQuizConfiguration.QUIZ_PAGE_SIZE);
-        return completionRepository.findAll(paging);
-    }
-
 }

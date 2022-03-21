@@ -1,11 +1,8 @@
 package de.cofinpro.webquizengine.restapi.controller;
 
-import de.cofinpro.webquizengine.persistence.Quiz;
-import de.cofinpro.webquizengine.persistence.QuizCompletion;
 import de.cofinpro.webquizengine.restapi.model.*;
 import de.cofinpro.webquizengine.restapi.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,43 +44,24 @@ public class WebQuizController {
 
     /**
      * GET endpoint "api/quizzes" - returning out all available web quizzes
+     * @param page the page number to be displayed
      * @return an array of all quiz objects created in this session starting with the Java quiz
      */
     @GetMapping("api/quizzes")
     public List<QuizResponse> getQuizzes(@RequestParam(defaultValue = "0") Integer page) {
-                                         //@RequestParam(defaultValue = "10") Integer pageSize,
-                                         //@RequestParam(defaultValue = "id") String sortBy) {
         return quizService.getQuizzes(page);
     }
 
-    /** TODO raus damit zum Schluss
-     * -> only needed for the silly hyperskill-requested format. nothing we'd do in real life...
-     * GET endpoint "api/quizzes" - returning out all available web quizzes
-     * @return an array of all quiz objects created in this session starting with the Java quiz
-     */
-    @GetMapping("api/quizzeshyperskill")
-    public Page<Quiz> getQuizzesPage(@RequestParam(defaultValue = "0") Integer page) {
-        return quizService.getQuizzesPage(page);
-    }
-
-
     /**
      * GET endpoint "api/quizzes" - returning out all available web quizzes
+     * @param userDetails the user details of the authenticated user
+     * @param page the page number to be displayed
      * @return an array of all quiz objects created in this session starting with the Java quiz
      */
     @GetMapping("api/quizzes/completed")
-    public List<QuizCompletionResponse> getQuizCompletions(@RequestParam(defaultValue = "0") Integer page) {
-        return quizService.getCompletions(page);
-    }
-
-    /** TODO raus damit zum Schluss
-     * -> only needed for the silly hyperskill-requested format. nothing we'd do in real life...
-     * GET endpoint "api/quizzes" - returning out all available web quizzes
-     * @return an array of all quiz objects created in this session starting with the Java quiz
-     */
-    @GetMapping("api/quizzes/completedhyperskill")
-    public Page<QuizCompletion> getQuizCompletionsPage(@RequestParam(defaultValue = "0") Integer page) {
-        return quizService.getCompletionsPage(page);
+    public List<QuizCompletionResponse> getQuizCompletions(@AuthenticationPrincipal UserDetails userDetails,
+                                                           @RequestParam(defaultValue = "0") Integer page) {
+        return quizService.getCompletions(userDetails.getUsername(), page);
     }
 
     /**
@@ -100,6 +78,7 @@ public class WebQuizController {
     /**
      * POST endpoint "api/quizzes" - receives and validates data to create a new quiz in the
      * ResponseBody and displays it with the id information from creation
+     * @param userDetails the user details of the authenticated user
      * @param quizRequest the creation data received
      * @return the queried quiz if available or a 404-HTTP response
      */
@@ -113,6 +92,7 @@ public class WebQuizController {
      * POST endpoint "api/quizzes/{id}/solve" - receiving an Integer answer to the quiz
      * as request parameter - e.g.: api/quiz?answer=0, that corresponds to the solution option
      * the client chooses (starting with 0).
+     * @param userDetails the user details of the authenticated user
      * @param id the id of a quiz as path variable
      * @param answerEntry the request body key:value data, consisting of an int array with valid
      *                    options for the quiz to solve as value
@@ -130,6 +110,7 @@ public class WebQuizController {
      * e.g.: api/quiz/2 that deletes the quiz to id given, if the authenticated user owns this quiz
      * if the quiz is not found - 404 is returned, if the quiz is not owned by the user - 403 is returned
      * if everything fits and the quiz can be deleted 204 is returned
+     * @param userDetails the user details of the authenticated user
      * @param id the id of a quiz as path variable
      * @return the appropriate status code - no response body
      */
@@ -145,7 +126,9 @@ public class WebQuizController {
      * All the fields given in the quizPatchRequestBody are optional, and will be applied, if the format is
      * valid. if the quiz is not found - 404 is returned, if the quiz is not owned by the user - 403 is returned
      * if everything fits and the quiz can be patched 200 is returned and the patched quiz is displayed
+     * @param userDetails the user details of the authenticated user
      * @param id the id of a quiz as path variable
+     * @param quizPatchRequest the user sent patch request data
      * @return the patched quiz if available and owned or an error status as above explained
      */
     @PatchMapping("api/quizzes/{id}")
