@@ -24,6 +24,7 @@ public class WebQuizConfiguration {
     public static final String USER_PASSWORD = "secret";
 
     public static final String JAVA_QUIZ_TITLE = "The Java Logo";
+    public static final int QUIZ_PAGE_SIZE = 3;//TODO 10;
     private static final String JAVA_QUIZ_TEXT = "What is depicted on the Java logo?";
     private static final List<String> JAVA_QUIZ_OPTIONS = List.of(
             "Robot", "Tea leaf", "Cup of coffee", "Bug");

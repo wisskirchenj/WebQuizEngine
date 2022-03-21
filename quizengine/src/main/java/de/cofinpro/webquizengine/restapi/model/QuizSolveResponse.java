@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class QuizAnswer {
+public class QuizSolveResponse {
 
-    public static QuizAnswer correct() {
-        return new QuizAnswer(true, "Cooooooorrect, oider!");
+    public static QuizSolveResponse correct() {
+        return new QuizSolveResponse(true, "Cooooooorrect, oider!");
     }
 
-    public static QuizAnswer incorrect() {
-        return new QuizAnswer(false, "Nöööööö !");
+    public static QuizSolveResponse incorrect() {
+        return new QuizSolveResponse(false, "Nöööööö !");
     }
 
     private boolean success;

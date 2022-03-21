@@ -1,11 +1,11 @@
 package de.cofinpro.webquizengine.restapi.controller;
 
-import de.cofinpro.webquizengine.restapi.model.QuizAnswer;
-import de.cofinpro.webquizengine.restapi.model.QuizPatchRequestBody;
-import de.cofinpro.webquizengine.restapi.model.QuizRequestBody;
-import de.cofinpro.webquizengine.restapi.model.QuizResponse;
+import de.cofinpro.webquizengine.persistence.Quiz;
+import de.cofinpro.webquizengine.persistence.QuizCompletion;
+import de.cofinpro.webquizengine.restapi.model.*;
 import de.cofinpro.webquizengine.restapi.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,8 +18,9 @@ import java.util.Map;
 /**
  * RESTController-class offering the following endpoints:
  * GET api/quiz - display the standard Java Quiz
- * GET api/quizzes - display all quizzes
+ * GET api/quizzes - display all quizzes, paginated
  * GET api/quizzes/{id} - display the quiz to id given
+ * GET api/quizzes/completed - display all quiz completions of the authenticated user, paginated and sorted
  * POST api/quizzes - create a new quiz
  * POST api/quizzes/{id}/solve - post an answer with response parameter answer = id -> e.g. api/quiz?answer=0 to given quiz id
  * DELETE api/quizzes/{id} - deletes the quiz to id given, if the authenticated user owns this quiz
@@ -49,8 +50,40 @@ public class WebQuizController {
      * @return an array of all quiz objects created in this session starting with the Java quiz
      */
     @GetMapping("api/quizzes")
-    public List<QuizResponse> getQuizzes() {
-        return quizService.getQuizzes();
+    public List<QuizResponse> getQuizzes(@RequestParam(defaultValue = "0") Integer page) {
+                                         //@RequestParam(defaultValue = "10") Integer pageSize,
+                                         //@RequestParam(defaultValue = "id") String sortBy) {
+        return quizService.getQuizzes(page);
+    }
+
+    /** TODO raus damit zum Schluss
+     * -> only needed for the silly hyperskill-requested format. nothing we'd do in real life...
+     * GET endpoint "api/quizzes" - returning out all available web quizzes
+     * @return an array of all quiz objects created in this session starting with the Java quiz
+     */
+    @GetMapping("api/quizzeshyperskill")
+    public Page<Quiz> getQuizzesPage(@RequestParam(defaultValue = "0") Integer page) {
+        return quizService.getQuizzesPage(page);
+    }
+
+
+    /**
+     * GET endpoint "api/quizzes" - returning out all available web quizzes
+     * @return an array of all quiz objects created in this session starting with the Java quiz
+     */
+    @GetMapping("api/quizzes/completed")
+    public List<QuizCompletionResponse> getQuizCompletions(@RequestParam(defaultValue = "0") Integer page) {
+        return quizService.getCompletions(page);
+    }
+
+    /** TODO raus damit zum Schluss
+     * -> only needed for the silly hyperskill-requested format. nothing we'd do in real life...
+     * GET endpoint "api/quizzes" - returning out all available web quizzes
+     * @return an array of all quiz objects created in this session starting with the Java quiz
+     */
+    @GetMapping("api/quizzes/completedhyperskill")
+    public Page<QuizCompletion> getQuizCompletionsPage(@RequestParam(defaultValue = "0") Integer page) {
+        return quizService.getCompletionsPage(page);
     }
 
     /**
@@ -83,12 +116,13 @@ public class WebQuizController {
      * @param id the id of a quiz as path variable
      * @param answerEntry the request body key:value data, consisting of an int array with valid
      *                    options for the quiz to solve as value
-     * @return a boolean - string answer object QuizAnswer
+     * @return a boolean - string answer object QuizSolveResponse
      */
     @PostMapping("api/quizzes/{id}/solve")
-    public ResponseEntity<QuizAnswer> answerQuiz(@PathVariable("id") long id,
-                                                 @RequestBody Map.Entry<String, List<Integer>> answerEntry) {
-        return quizService.returnSolveResponse(id, answerEntry.getValue());
+    public ResponseEntity<QuizSolveResponse> solveQuiz(@AuthenticationPrincipal UserDetails userDetails,
+                                                       @PathVariable("id") long id,
+                                                       @RequestBody Map.Entry<String, List<Integer>> answerEntry) {
+        return quizService.returnSolveResponse(id, userDetails.getUsername(), answerEntry.getValue());
     }
 
     /**

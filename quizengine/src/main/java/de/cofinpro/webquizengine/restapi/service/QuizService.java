@@ -2,12 +2,14 @@ package de.cofinpro.webquizengine.restapi.service;
 
 import de.cofinpro.webquizengine.configuration.WebQuizConfiguration;
 import de.cofinpro.webquizengine.persistence.Quiz;
+import de.cofinpro.webquizengine.persistence.QuizCompletion;
+import de.cofinpro.webquizengine.persistence.QuizCompletionRepository;
 import de.cofinpro.webquizengine.persistence.QuizRepository;
-import de.cofinpro.webquizengine.restapi.model.QuizAnswer;
-import de.cofinpro.webquizengine.restapi.model.QuizPatchRequestBody;
-import de.cofinpro.webquizengine.restapi.model.QuizRequestBody;
-import de.cofinpro.webquizengine.restapi.model.QuizResponse;
+import de.cofinpro.webquizengine.restapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,10 +26,12 @@ import java.util.List;
 public class QuizService {
 
     private QuizRepository quizRepository;
+    private QuizCompletionRepository completionRepository;
 
     @Autowired
-    public QuizService(QuizRepository quizRepository) {
+    public QuizService(QuizRepository quizRepository, QuizCompletionRepository completionRepository) {
         this.quizRepository = quizRepository;
+        this.completionRepository = completionRepository;
     }
 
     /**
@@ -38,7 +42,6 @@ public class QuizService {
         return ResponseEntity.ok(QuizResponse.fromQuiz(
                 quizRepository.findByTitle(WebQuizConfiguration.JAVA_QUIZ_TITLE).orElseThrow()
         ));
-
     }
 
     /**
@@ -54,13 +57,28 @@ public class QuizService {
         return quizRepository.findById(id).orElseThrow(QuizNotFoundException::new);
     }
 
+    /** TODO raus damit zum Schluss
+     * service corresponding to GET endpoints "api/quizzes"
+     * @return all quizzes from the Quiz repository
+     * @param page the page number to be displayed, starting from 0
+     */
+    public Page<Quiz> getQuizzesPage(Integer page) {
+        Pageable paging = PageRequest.of(page, WebQuizConfiguration.QUIZ_PAGE_SIZE);
+        return quizRepository.findAll(paging);
+    }
+
     /**
      * service corresponding to GET endpoints "api/quizzes"
-     * @return all quizzes from the QuizGenerator component
+     * @return all quizzes from the Quiz repository
+     * @param page the page number to be displayed, starting from 0
      */
-    public List<QuizResponse> getQuizzes() {
+    public List<QuizResponse> getQuizzes(Integer page) {
         List<QuizResponse> quizzes = new ArrayList<>();
-        for (Quiz quiz : quizRepository.findAll()) {
+
+        Pageable paging = PageRequest.of(page, WebQuizConfiguration.QUIZ_PAGE_SIZE);
+        Page<Quiz> pagedResult = quizRepository.findAll(paging);
+
+        for (Quiz quiz : pagedResult.getContent()) {
             quizzes.add(QuizResponse.fromQuiz(quiz));
         }
         return quizzes;
@@ -70,6 +88,7 @@ public class QuizService {
      * service corresponding to POST endpoints "api/quizzes".
      * saves the quiz entity created from the quizRequest in the Quiz Repo.
      * @param quizRequest the quiz DTO as received by POST
+     * @param username the name of the user who initiated the creation
      * @return the created quiz information - also displaying the id-key to client
      */
     public QuizResponse createQuiz(QuizRequestBody quizRequest, String username) {
@@ -80,18 +99,23 @@ public class QuizService {
     /**
      * service corresponding to POST endpoints "api/quizzes/{id}/solve"
      * @param id the queried quiz id
+     * @param username the name of the user who attempts to solve
      * @param answer the answer option, that the user chose
      * @return a feedback message on correctness of answer option or a 404 NOT FOUND
      */
-    public ResponseEntity<QuizAnswer> returnSolveResponse(long id, List<Integer> answer) {
+    public ResponseEntity<QuizSolveResponse> returnSolveResponse(long id, String username, List<Integer> answer) {
         if (answer == null) {
             return ResponseEntity.badRequest().build();
         }
         Quiz quiz = findQuizByIdOrThrow(id);
         if (containsSameElements(answer, quiz.getAnswer())) {
-            return ResponseEntity.ok(QuizAnswer.correct());
+            QuizCompletion quizCompletion = new QuizCompletion(quiz, username);
+            quiz.addCompletion(quizCompletion);
+            completionRepository.save(quizCompletion);
+            quizRepository.save(quiz);
+            return ResponseEntity.ok(QuizSolveResponse.correct());
         }
-        return ResponseEntity.ok(QuizAnswer.incorrect());
+        return ResponseEntity.ok(QuizSolveResponse.incorrect());
     }
 
     private boolean containsSameElements(List<Integer> answer, List<Integer> correctOptions) {
@@ -137,4 +161,22 @@ public class QuizService {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
+
+    public List<QuizCompletionResponse> getCompletions(Integer page) {
+        List<QuizCompletionResponse> completions = new ArrayList<>();
+
+        Pageable paging = PageRequest.of(page, WebQuizConfiguration.QUIZ_PAGE_SIZE);
+        Page<QuizCompletion> pagedResult = completionRepository.findAll(paging);
+
+        for (QuizCompletion completion : pagedResult.getContent()) {
+            completions.add(QuizCompletionResponse.fromQuizCompletion(completion));
+        }
+        return completions;
+    }
+
+    public Page<QuizCompletion> getCompletionsPage(Integer page) {
+        Pageable paging = PageRequest.of(page, WebQuizConfiguration.QUIZ_PAGE_SIZE);
+        return completionRepository.findAll(paging);
+    }
+
 }

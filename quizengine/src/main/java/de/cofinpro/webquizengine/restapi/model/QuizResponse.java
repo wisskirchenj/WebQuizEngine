@@ -9,8 +9,7 @@ import java.util.List;
 
 /**
  * DTO object representing a quiz response.
- * Different from Quiz objects, at this stage (before creation) no id has been assigned
- * and also different from GET requests the solution to the quiz has to be provided by client.
+ * This object is returned by all GET endpoints of the quiz controller, that provide quiz data.
  */
 @AllArgsConstructor
 @NoArgsConstructor

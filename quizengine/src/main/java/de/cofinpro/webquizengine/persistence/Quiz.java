@@ -1,5 +1,6 @@
 package de.cofinpro.webquizengine.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.cofinpro.webquizengine.restapi.model.QuizPatchRequestBody;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,9 +22,11 @@ import java.util.List;
 public class Quiz {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "quiz_generator")
+    @SequenceGenerator(name = "quiz_generator", sequenceName = "quiz_sequence", initialValue = 0)
+    private Long id;
 
+    @JsonIgnore //TODO nur für Hyperskill
     private String username;
     private String title;
     private String text;
@@ -30,15 +34,33 @@ public class Quiz {
     @ElementCollection
     private List<String> options;
 
+    @JsonIgnore //TODO nur für Hyperskill
     @ElementCollection
     private List<Integer> answer;
 
+    @OneToMany(mappedBy = "quiz")
+    private List<QuizCompletion> completions = new ArrayList<>();
+
+    /**
+     * apply a patch request received to this quiz
+     * @param quizPatchRequest the patch request data to apply
+     * @return reference to this Quiz object
+     */
     public Quiz applyPatchRequest(QuizPatchRequestBody quizPatchRequest) {
         title = isNullOrBlank(quizPatchRequest.getTitle()) ? title : quizPatchRequest.getTitle();
         text = isNullOrBlank(quizPatchRequest.getText()) ? text : quizPatchRequest.getText();
         options = quizPatchRequest.getOptions() == null ? options : quizPatchRequest.getOptions();
         answer  = quizPatchRequest.getAnswer() == null ? answer : quizPatchRequest.getAnswer();
         return this;
+    }
+
+    /**
+     * add a new completion to this quiz
+     * @param quizCompletion the new completion to add to the quiz's completion list
+     * @return reference to this Quiz object
+     */
+    public void addCompletion(QuizCompletion quizCompletion) {
+        completions.add(quizCompletion);
     }
 
     private boolean isNullOrBlank(String string) {

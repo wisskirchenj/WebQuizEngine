@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.cofinpro.webquizengine.configuration.WebQuizConfiguration;
 import de.cofinpro.webquizengine.restapi.model.QuizPatchRequestBody;
 import de.cofinpro.webquizengine.restapi.model.QuizRequestBody;
+import de.cofinpro.webquizengine.restapi.model.QuizSolveResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -83,23 +84,23 @@ class WebQuizEngineApplicationTests {
     @Test
     void postApiQuizSolveSuccess() throws Exception {
         String postBody = "{\"answer\": [2]}";
-        mockMvc.perform(post("/api/quizzes/1/solve").headers(header).content(postBody)
+        mockMvc.perform(post("/api/quizzes/0/solve").headers(header).content(postBody)
                         .contentType("application/json;charset=UTF-8"))
-                .andExpect(content().json("{\"success\":true,\"feedback\":\"Cooooooorrect, oider!\"}"));
+                .andExpect(content().json(toJson(QuizSolveResponse.correct())));
     }
 
     @Test
     void postApiQuizSolveFailure() throws Exception {
         String postBody = "{\"answer\": [0,1]}";
-        mockMvc.perform(post("/api/quizzes/1/solve").headers(header).content(postBody)
+        mockMvc.perform(post("/api/quizzes/0/solve").headers(header).content(postBody)
                         .contentType("application/json;charset=UTF-8"))
-                .andExpect(content().json("{\"success\":false,\"feedback\":\"Nöööööö !\"}"));
+                .andExpect(content().json(toJson(QuizSolveResponse.incorrect())));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"{\"answer\": \"\"}", "{\"answer\": null}", "{}"})
     void postApiQuizSolveInvalid(String postBody) throws Exception {
-        mockMvc.perform(post("/api/quizzes/1/solve").headers(header).content(postBody)
+        mockMvc.perform(post("/api/quizzes/0/solve").headers(header).content(postBody)
                         .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isBadRequest());
     }
@@ -157,7 +158,7 @@ class WebQuizEngineApplicationTests {
                 new QuizPatchRequestBody("new java quiz",  "question", List.of("opt1","opt2"), List.of());
 
         header.setBasicAuth(WebQuizConfiguration.USER_COFINPRO, WebQuizConfiguration.USER_PASSWORD);
-        mockMvc.perform(patch("/api/quizzes/1")
+        mockMvc.perform(patch("/api/quizzes/0")
                         .content(toJson(patchRequest)).headers(header).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().is(403));
     }
