@@ -3,9 +3,10 @@
 Implemented as 2nd Course Project in the Java <b>Backend</b> Developer Track of hyperskill.org's
 JetBrain Academy.
 
-It's my first Spring Boot application <b>with JPA and security</b> to be developed.
+It was my second Spring Boot application and the first <b>with Hibernate/JPA, security</b> to be developed.
+Also some larger queries are paginated and sorted. A lot of validation and integration testing is included.
 
-[//]: # (Project was completed on xx.0d.22.)
+Project was completed on 21.03.22.
 
 ## Repository Contents
 
@@ -24,3 +25,5 @@ tasks are included.
 
 19.03.22 Stage 5 completed - Spring Security, Register-endpoint with Repo. Delete patch authenticated 
 for owned quizzes
+
+21.03.22 Final Stage 6 completed - PaginatingAndSorting Repos for larger queries and @Query-annotated custom JPQL
