@@ -2,13 +2,13 @@ package de.cofinpro.webquizengine.restapi.controller;
 
 import de.cofinpro.webquizengine.restapi.model.*;
 import de.cofinpro.webquizengine.restapi.service.QuizService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +45,7 @@ public class WebQuizController {
     /**
      * GET endpoint "api/quizzes" - returning out all available web quizzes
      * @param page the page number to be displayed
-     * @return an array of all quiz objects created in this session starting with the Java quiz
+     * @return a list of all quiz objects created in this session starting with the Java quiz
      */
     @GetMapping("api/quizzes")
     public List<QuizResponse> getQuizzes(@RequestParam(defaultValue = "0") Integer page) {
@@ -56,7 +56,7 @@ public class WebQuizController {
      * GET endpoint "api/quizzes" - returning out all available web quizzes
      * @param userDetails the user details of the authenticated user
      * @param page the page number to be displayed
-     * @return an array of all quiz objects created in this session starting with the Java quiz
+     * @return a list of all quiz objects created in this session starting with the Java quiz
      */
     @GetMapping("api/quizzes/completed")
     public List<QuizCompletionResponse> getQuizCompletions(@AuthenticationPrincipal UserDetails userDetails,

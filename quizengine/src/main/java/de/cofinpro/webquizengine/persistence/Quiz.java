@@ -1,12 +1,12 @@
 package de.cofinpro.webquizengine.persistence;
 
 import de.cofinpro.webquizengine.restapi.model.QuizPatchRequestBody;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

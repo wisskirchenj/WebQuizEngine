@@ -1,11 +1,10 @@
 package de.cofinpro.webquizengine.persistence;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import javax.persistence.*;
 
 /**
  * Persistence layer entity object representing a registered user.

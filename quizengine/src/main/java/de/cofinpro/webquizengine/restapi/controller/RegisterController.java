@@ -2,13 +2,12 @@ package de.cofinpro.webquizengine.restapi.controller;
 
 import de.cofinpro.webquizengine.restapi.model.UserRequestBody;
 import de.cofinpro.webquizengine.restapi.service.RegisterService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 /**
  * RESTController-class offering the following endpoint - (public accessible, not authenticated):
