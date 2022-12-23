@@ -45,7 +45,7 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.POST,"/actuator/shutdown").permitAll()
                 .requestMatchers("/h2").permitAll()
                 .requestMatchers("/api/register").permitAll()
-                .requestMatchers("/admin.html").hasRole("ADMIN")
+                .requestMatchers("/admin**").hasRole("ADMIN")
                 .requestMatchers("/", "/api/**").authenticated()
                 .and().csrf().disable().httpBasic().and().formLogin();
         return http.build();
