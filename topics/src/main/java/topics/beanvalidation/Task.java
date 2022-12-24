@@ -1,7 +1,7 @@
 package topics.beanvalidation;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 class Task {
     @Size(min = 1, max = 50)

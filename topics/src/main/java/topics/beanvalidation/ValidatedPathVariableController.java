@@ -1,12 +1,11 @@
 package topics.beanvalidation;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 /**
  * The program contains the following endpoint:
