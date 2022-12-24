@@ -68,14 +68,6 @@ class WebQuizEngineApplicationTests {
     }
 
     @Test
-    void getApiQuiz() throws Exception {
-        mockMvc.perform(get("/api/quiz").headers(header))
-                .andExpect(content().json("{\"title\":\"The Java Logo\"," +
-                        "\"text\":\"What is depicted on the Java logo?\"," +
-                        "\"options\":[\"Robot\",\"Tea leaf\",\"Cup of coffee\",\"Bug\"]}"));
-    }
-
-    @Test
     void postApiQuizSolveSuccess() throws Exception {
         String postBody = "{\"answer\": [2]}";
         mockMvc.perform(post("/api/quizzes/0/solve").headers(header).content(postBody)
