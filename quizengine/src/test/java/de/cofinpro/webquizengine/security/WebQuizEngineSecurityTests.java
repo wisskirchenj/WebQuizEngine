@@ -51,7 +51,7 @@ class WebQuizEngineSecurityTests {
         // now authenticate with new user
         HttpHeaders header = new HttpHeaders();
         header.setBasicAuth("abc@def.gh", "secre");
-        mockMvc.perform(get("/api/quiz").headers(header))
+        mockMvc.perform(get("/api/quizzes").headers(header))
                 .andExpect(status().isOk());
     }
 

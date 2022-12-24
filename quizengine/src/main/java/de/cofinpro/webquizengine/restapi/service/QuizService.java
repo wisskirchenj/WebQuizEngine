@@ -28,9 +28,8 @@ public class QuizService {
 
     private QuizRepository quizRepository;
     private QuizCompletionRepository completionRepository;
-
     @Autowired
-    public QuizService(QuizRepository quizRepository, QuizCompletionRepository completionRepository) {
+    public QuizService(QuizRepository quizRepository, QuizCompletionRepository completionRepository, QuizResponse javaQuiz) {
         this.quizRepository = quizRepository;
         this.completionRepository = completionRepository;
     }
