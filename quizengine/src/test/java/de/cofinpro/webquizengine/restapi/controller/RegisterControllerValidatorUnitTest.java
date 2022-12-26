@@ -12,7 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RegisterControllerValidatorUnitTest {
 
-    final JPAUnitTestValidator<UserRequestBody> validator = new JPAUnitTestValidator<>(this::getValidUserRequest);
+    final JpaUnitTestValidator<UserRequestBody> validator
+            = new JpaUnitTestValidator<>(this::getValidUserRequest, UserRequestBody.class);
 
     UserRequestBody getValidUserRequest() {
         return new UserRequestBody("some_name@company.org", "secret_word");

@@ -14,9 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WebQuizControllerValidatorUnitTest {
 
-    final JPAUnitTestValidator<QuizRequestBody> quizValidator = new JPAUnitTestValidator<>(this::getValidQuizRequest);
-    final JPAUnitTestValidator<QuizPatchRequestBody> patchValidator
-            = new JPAUnitTestValidator<>(this::getValidQuizPatchRequest);
+    final JpaUnitTestValidator<QuizRequestBody> quizValidator
+            = new JpaUnitTestValidator<>(this::getValidQuizRequest, QuizRequestBody.class);
+    final JpaUnitTestValidator<QuizPatchRequestBody> patchValidator
+            = new JpaUnitTestValidator<>(this::getValidQuizPatchRequest, QuizPatchRequestBody.class);
 
     QuizRequestBody getValidQuizRequest() {
         return new QuizRequestBody("The quiz tile",
