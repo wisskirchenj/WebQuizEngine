@@ -59,7 +59,7 @@ class WebQuizEngineApplicationTests {
 
     @BeforeEach
     public void setup() {
-        header.setBasicAuth(WebQuizConfiguration.ADMIN_COFINPRO, WebQuizConfiguration.ADMIN_PASSWORD);
+        header.setBasicAuth(WebQuizConfiguration.ADMIN_COFINPRO, "topsecret");
     }
 
     @Test
@@ -136,7 +136,7 @@ class WebQuizEngineApplicationTests {
                 .andExpect(content().string(containsString("the question")))
                 .andReturn().getResponse();
 
-        header.setBasicAuth(WebQuizConfiguration.USER_COFINPRO, WebQuizConfiguration.USER_PASSWORD);
+        header.setBasicAuth(WebQuizConfiguration.USER_COFINPRO, "secret");
         mockMvc.perform(delete("/api/quizzes/%d".formatted(quizIdFromResponse(newQuizResponse)))
                         .headers(header)).andExpect(status().is(403));
     }
@@ -147,7 +147,7 @@ class WebQuizEngineApplicationTests {
         QuizPatchRequestBody patchRequest =
                 new QuizPatchRequestBody("new java quiz",  "question", List.of("opt1","opt2"), List.of());
 
-        header.setBasicAuth(WebQuizConfiguration.USER_COFINPRO, WebQuizConfiguration.USER_PASSWORD);
+        header.setBasicAuth(WebQuizConfiguration.USER_COFINPRO, "secret");
         mockMvc.perform(patch("/api/quizzes/0")
                         .content(toJson(patchRequest)).headers(header).contentType("application/json;charset=UTF-8"))
                 .andExpect(status().is(403));

@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +27,10 @@ import java.util.List;
 @Service
 public class QuizService {
 
-    private QuizRepository quizRepository;
-    private QuizCompletionRepository completionRepository;
+    private final QuizRepository quizRepository;
+    private final QuizCompletionRepository completionRepository;
     @Autowired
-    public QuizService(QuizRepository quizRepository, QuizCompletionRepository completionRepository, QuizResponse javaQuiz) {
+    public QuizService(QuizRepository quizRepository, QuizCompletionRepository completionRepository) {
         this.quizRepository = quizRepository;
         this.completionRepository = completionRepository;
     }
@@ -148,7 +149,7 @@ public class QuizService {
             quizRepository.save(quiz.applyPatchRequest(quizPatchRequest));
             return ResponseEntity.ok(QuizResponse.fromQuiz(quiz));
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "not owner");
         }
     }
 

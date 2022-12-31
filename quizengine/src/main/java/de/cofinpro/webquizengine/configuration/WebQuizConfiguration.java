@@ -8,7 +8,6 @@ import de.cofinpro.webquizengine.restapi.model.QuizResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -19,9 +18,9 @@ import java.util.List;
 public class WebQuizConfiguration {
 
     public static final String ADMIN_COFINPRO = "admin@cofinpro.de";
-    public static final String ADMIN_PASSWORD = "topsecret";
+    public static final String ADMIN_PASSWORD = "$2a$10$xcPv1H0w83PpW1k5u27LweY0gO/sG.4ggkwUzC4V7rTuiWQTZtGMa";
     public static final String USER_COFINPRO = "user@cofinpro.de";
-    public static final String USER_PASSWORD = "secret";
+    public static final String USER_PASSWORD = "$2a$10$tDkP5RqxOso/2baWqAEi7uh79OY.MuXiychlMOxA9jJf4r4z27w1e";
 
     public static final String JAVA_QUIZ_TITLE = "The Java Logo";
     public static final int QUIZ_PAGE_SIZE = 5;
@@ -29,16 +28,13 @@ public class WebQuizConfiguration {
     private static final List<String> JAVA_QUIZ_OPTIONS = List.of(
             "Robot", "Tea leaf", "Cup of coffee", "Bug");
 
-    private QuizRepository quizRepository;
-    private RegisteredUserRepository userRepository;
-    private PasswordEncoder encoder;
+    private final QuizRepository quizRepository;
+    private final RegisteredUserRepository userRepository;
 
     @Autowired
-    public WebQuizConfiguration(QuizRepository quizRepository, RegisteredUserRepository userRepository,
-                                PasswordEncoder encoder) {
+    public WebQuizConfiguration(QuizRepository quizRepository, RegisteredUserRepository userRepository) {
         this.quizRepository = quizRepository;
         this.userRepository = userRepository;
-        this.encoder = encoder;
     }
 
     /**
@@ -49,7 +45,7 @@ public class WebQuizConfiguration {
     public RegisteredUser getAdmin() {
         return userRepository.findByUsername(ADMIN_COFINPRO)
                 .orElseGet(() -> userRepository.save(new RegisteredUser().setUsername(ADMIN_COFINPRO)
-                .setEncryptedPassword(encoder.encode(ADMIN_PASSWORD))));
+                .setEncryptedPassword(ADMIN_PASSWORD)));
     }
 
     /**
@@ -60,7 +56,7 @@ public class WebQuizConfiguration {
     public RegisteredUser getUser() {
         return userRepository.findByUsername(USER_COFINPRO)
                 .orElseGet(() -> userRepository.save(new RegisteredUser().setUsername(USER_COFINPRO)
-                        .setEncryptedPassword(encoder.encode(ADMIN_PASSWORD))));
+                        .setEncryptedPassword(ADMIN_PASSWORD)));
     }
 
     /**

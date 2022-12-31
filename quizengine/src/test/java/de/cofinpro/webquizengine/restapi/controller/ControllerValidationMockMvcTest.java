@@ -55,7 +55,7 @@ class ControllerValidationMockMvcTest {
 
     @BeforeEach
     public void setup() {
-        header.setBasicAuth(WebQuizConfiguration.USER_COFINPRO, WebQuizConfiguration.USER_PASSWORD);
+        header.setBasicAuth(WebQuizConfiguration.USER_COFINPRO, "secret");
     }
 
     @Test
@@ -113,7 +113,7 @@ class ControllerValidationMockMvcTest {
 
     @Test
     void patchQuizValidRequest() throws Exception  {
-        header.setBasicAuth(WebQuizConfiguration.ADMIN_COFINPRO, WebQuizConfiguration.ADMIN_PASSWORD);
+        header.setBasicAuth(WebQuizConfiguration.ADMIN_COFINPRO, "topsecret");
         List<String> newOptions = List.of("new option 1", "new option 2", "new option 3");
         QuizPatchRequestBody patchRequest = new QuizPatchRequestBody("New Java Logo",
                 "New Question?", newOptions,  List.of(2));
