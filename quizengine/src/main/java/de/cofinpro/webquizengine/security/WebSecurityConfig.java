@@ -24,9 +24,9 @@ public class WebSecurityConfig {
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.inMemoryAuthentication()
                 .withUser(WebQuizConfiguration.USER_COFINPRO)
-                .password(getEncoder().encode(WebQuizConfiguration.USER_PASSWORD)).roles("USER")
+                .password(WebQuizConfiguration.USER_PASSWORD).roles("USER")
                 .and().withUser(WebQuizConfiguration.ADMIN_COFINPRO)
-                .password(getEncoder().encode(WebQuizConfiguration.ADMIN_PASSWORD)).roles("ADMIN")
+                .password(WebQuizConfiguration.ADMIN_PASSWORD).roles("ADMIN")
                 .and().passwordEncoder(getEncoder());
         authenticationManagerBuilder.userDetailsService(userDetailsService);
         return authenticationManagerBuilder.build();
@@ -42,12 +42,14 @@ public class WebSecurityConfig {
                                                    AuthenticationManager authenticationManager) throws Exception {
         http.authenticationManager(authenticationManager)
                 .authorizeHttpRequests()
+                .shouldFilterAllDispatcherTypes(false)
                 .requestMatchers(HttpMethod.POST,"/actuator/shutdown").permitAll()
                 .requestMatchers("/h2").permitAll()
                 .requestMatchers("/api/register").permitAll()
                 .requestMatchers("/admin**").hasRole("ADMIN")
                 .requestMatchers("/", "/api/**").authenticated()
-                .and().csrf().disable().httpBasic().and().formLogin();
+                .and()
+                .csrf().disable().httpBasic().and().formLogin();
         return http.build();
     }
 }
