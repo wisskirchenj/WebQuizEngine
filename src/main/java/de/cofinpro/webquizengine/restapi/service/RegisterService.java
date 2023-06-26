@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class RegisterService {
 
-    private PasswordEncoder encoder;
-    private RegisteredUserRepository userRepository;
+    private final PasswordEncoder encoder;
+    private final RegisteredUserRepository userRepository;
 
     @Autowired
     public RegisterService(PasswordEncoder passwordEncoder, RegisteredUserRepository userRepository) {

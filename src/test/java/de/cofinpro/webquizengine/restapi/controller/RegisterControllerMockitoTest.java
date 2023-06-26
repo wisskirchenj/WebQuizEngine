@@ -4,9 +4,8 @@ import de.cofinpro.webquizengine.restapi.model.UserRequestBody;
 import de.cofinpro.webquizengine.restapi.service.RegisterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -16,7 +15,7 @@ import static org.mockito.Mockito.verify;
 
 @Deprecated
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings
 class RegisterControllerMockitoTest {
 
     @MockBean
@@ -34,7 +33,7 @@ class RegisterControllerMockitoTest {
         UserRequestBody userRequest = new UserRequestBody("dummy@company.org", "password");
         registerController.registerUser(userRequest);
         // check if validation succeeded - service called
-        verify(mockService, times(1)).registerUser(any(UserRequestBody.class));
+        verify(mockService, times(1)).registerUser(userRequest);
     }
 
     /**
