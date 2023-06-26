@@ -12,6 +12,8 @@ out/
 .idea/modules.xml
 .idea/libraries/
 .idea/sonarlint/
+.idea/dataSources/
+.idea/shelf/
 !.idea/compiler.xml
 
 ### Mac OS ###

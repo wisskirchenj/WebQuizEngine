@@ -1,0 +1,36 @@
+GET http://localhost:9090/juergen/api/quizzes
+
+<> 2022-03-17T130052.401.json
+
+###
+
+GET http://localhost:9090/juergen/register.html
+
+<> 2022-03-17T125235.200.html
+
+###
+
+GET http://localhost:9090/juergen/register
+
+<> 2022-03-17T125226.404.json
+
+###
+
+GET http://127.0.0.1:9090/juergen/api/quizzes
+
+<> 2022-03-13T171853.200.json
+
+###
+
+GET http://127.0.0.1:9090/juergen/api/quizzes
+
+<> 2022-03-13T171834.200.json
+
+###
+
+GET http://127.0.0.1:9090/juergen/api/quizzes
+
+<> 2022-03-13T163802.200.json
+
+###
+
