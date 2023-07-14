@@ -1,6 +1,5 @@
 package de.cofinpro.webquizengine.restapi.service;
 
-import de.cofinpro.webquizengine.configuration.WebQuizConfiguration;
 import de.cofinpro.webquizengine.persistence.Quiz;
 import de.cofinpro.webquizengine.persistence.QuizCompletion;
 import de.cofinpro.webquizengine.persistence.QuizCompletionRepository;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,22 +29,13 @@ import java.util.List;
 @Service
 public class QuizService {
 
+    public static final int QUIZ_PAGE_SIZE = 5;
     private final QuizRepository quizRepository;
     private final QuizCompletionRepository completionRepository;
     @Autowired
     public QuizService(QuizRepository quizRepository, QuizCompletionRepository completionRepository) {
         this.quizRepository = quizRepository;
         this.completionRepository = completionRepository;
-    }
-
-    /**
-     * service corresponding to GET endpoints "api/quiz"
-     * @return the injected java quiz as retrieved from the QuizRepository
-     */
-    public ResponseEntity<QuizResponse> getJavaQuiz() {
-        return ResponseEntity.ok(QuizResponse.fromQuiz(
-                quizRepository.findByTitle(WebQuizConfiguration.JAVA_QUIZ_TITLE).orElseThrow()
-        ));
     }
 
     /**
@@ -70,7 +59,7 @@ public class QuizService {
     public List<QuizResponse> getQuizzes(Integer page) {
         List<QuizResponse> quizzes = new ArrayList<>();
 
-        Pageable paging = PageRequest.of(page, WebQuizConfiguration.QUIZ_PAGE_SIZE);
+        Pageable paging = PageRequest.of(page, QUIZ_PAGE_SIZE);
         Page<Quiz> pagedResult = quizRepository.findAll(paging);
 
         for (Quiz quiz : pagedResult.getContent()) {
@@ -128,9 +117,9 @@ public class QuizService {
      * @param id the id of a quiz as path variable
      * @return an empty ResponseEntity with given HTTP-Status
      */
-    public ResponseEntity<Object> deleteQuizById(long id, UserDetails userDetails) {
+    public ResponseEntity<Object> deleteQuizById(long id, String userName) {
         Quiz quiz = findQuizByIdOrThrow(id);
-        if (quiz.getUsername().equals(userDetails.getUsername())) {
+        if (quiz.getUsername().equals(userName)) {
             quizRepository.deleteById(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
@@ -146,9 +135,9 @@ public class QuizService {
      * @return the patched quiz if available or a 404- or 403-HTTP response
      */
     public ResponseEntity<QuizResponse> patchQuizById(long id, QuizPatchRequestBody quizPatchRequest,
-                                                      UserDetails userDetails) {
+                                                      String userName) {
         Quiz quiz = findQuizByIdOrThrow(id);
-        if (quiz.getUsername().equals(userDetails.getUsername())) {
+        if (quiz.getUsername().equals(userName)) {
 
             quizRepository.save(quiz.applyPatchRequest(quizPatchRequest));
             return ResponseEntity.ok(QuizResponse.fromQuiz(quiz));
@@ -165,7 +154,7 @@ public class QuizService {
     public List<QuizCompletionResponse> getCompletions(String username, Integer page) {
         List<QuizCompletionResponse> completions = new ArrayList<>();
 
-        Pageable paging = PageRequest.of(page, WebQuizConfiguration.QUIZ_PAGE_SIZE,
+        Pageable paging = PageRequest.of(page, QUIZ_PAGE_SIZE,
                 Sort.Direction.DESC, "completedAt");
         Page<QuizCompletion> pagedResult = completionRepository.findAllByCompletedByUsernameEquals(paging, username);
 

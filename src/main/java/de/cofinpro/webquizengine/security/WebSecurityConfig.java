@@ -1,60 +1,70 @@
 package de.cofinpro.webquizengine.security;
 
-import de.cofinpro.webquizengine.configuration.WebQuizConfiguration;
 import jakarta.servlet.DispatcherType;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtIssuerValidator;
+import org.springframework.security.oauth2.jwt.JwtTimestampValidator;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.SupplierJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-@EnableWebSecurity
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @Configuration
+@ConfigurationProperties("security.oauth2")
+@EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http,
-                                                       UserDetailsService userDetailsService) throws Exception {
-        var authenticationManagerBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.inMemoryAuthentication()
-                .withUser(WebQuizConfiguration.USER_COFINPRO)
-                .password(WebQuizConfiguration.USER_PASSWORD).roles("USER")
-                .and().withUser(WebQuizConfiguration.ADMIN_COFINPRO)
-                .password(WebQuizConfiguration.ADMIN_PASSWORD).roles("ADMIN")
-                .and().passwordEncoder(getEncoder());
-        authenticationManagerBuilder.userDetailsService(userDetailsService);
-        return authenticationManagerBuilder.build();
-    }
+    @Getter
+    @Setter
+    private String issuerValidatorUri;
 
     @Bean
-    public PasswordEncoder getEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   AuthenticationManager authenticationManager) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authenticationManager(authenticationManager)
+                .csrf(CsrfConfigurer::disable)
+                .oauth2ResourceServer(auth -> auth.jwt(Customizer.withDefaults()))
                 .authorizeHttpRequests(auth -> auth
+                        // next line needed (esp. DispatcherType.ERROR) to prevent interception of AuthorizationFilter in error dispatch
                         .dispatcherTypeMatchers(DispatcherType.ASYNC, DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                         .requestMatchers(HttpMethod.POST, "/actuator/shutdown").permitAll()
-                        .requestMatchers("/h2").permitAll()
-                        .requestMatchers("/api/register").permitAll()
-                        .requestMatchers("/admin**").hasRole("ADMIN")
-                        .requestMatchers("/", "/api/**").authenticated())
-                .csrf(CsrfConfigurer::disable)
-                .httpBasic(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults())
+                        .requestMatchers(HttpMethod.GET, "/error").permitAll()
+                        .requestMatchers("/api/quiz/**").authenticated()
+                        .anyRequest().denyAll())
                 .build();
+    }
+
+    @Bean
+    public SupplierJwtDecoder jwtDecoder(OAuth2ResourceServerProperties properties) {
+        return new SupplierJwtDecoder(() -> {
+            if (Objects.isNull(issuerValidatorUri)) {
+                issuerValidatorUri = properties.getJwt().getIssuerUri();
+            }
+            List<OAuth2TokenValidator<Jwt>> validators = new ArrayList<>();
+            validators.add(new JwtTimestampValidator());
+            validators.add(new JwtIssuerValidator(issuerValidatorUri));
+            var oauth2TokenValidator = new DelegatingOAuth2TokenValidator<>(validators);
+
+            NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder
+                    .withIssuerLocation(properties.getJwt().getIssuerUri())
+                    .build();
+            jwtDecoder.setJwtValidator(oauth2TokenValidator);
+            return jwtDecoder;
+        });
     }
 }

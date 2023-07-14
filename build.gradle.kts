@@ -1,4 +1,3 @@
-import org.gradle.internal.classpath.Instrumented.systemProperty
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
@@ -10,7 +9,7 @@ plugins {
 
 group = "de.cofinpro"
 version = "0.1-SNAPSHOT"
-
+val dockerHubRepo = "wisskirchenj/"
 
 configurations {
     compileOnly {
@@ -27,16 +26,17 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-data-rest")
-    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
     testCompileOnly("org.projectlombok:lombok")
     testAnnotationProcessor("org.projectlombok:lombok")
 }
@@ -46,7 +46,7 @@ tasks.named<Test>("test") {
 }
 
 tasks.named<BootBuildImage>("bootBuildImage") {
-    systemProperty("spring.profiles.active", "k8s")
     builder.set("dashaun/builder:tiny")
+    imageName.set(dockerHubRepo + rootProject.name + ":" + version)
     environment.put("BP_NATIVE_IMAGE", "true")
 }
