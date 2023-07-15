@@ -4,30 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c86a7c4-5b7e-4e04-b6c4-e27a764e0162" name="Changes" comment="improve .gitignore">
-      <change afterPath="$PROJECT_DIR$/src/test/resources/init-data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+    <list default="true" id="6c86a7c4-5b7e-4e04-b6c4-e27a764e0162" name="Changes" comment="add oauth2resourceserver and remove user management">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/configuration/WebQuizConfiguration.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/persistence/RegisteredUser.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/persistence/RegisteredUserRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/restapi/controller/RegisterController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/restapi/controller/WebQuizController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/restapi/controller/WebQuizController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/restapi/model/UserRequestBody.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/restapi/service/QuizService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/restapi/service/QuizService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/restapi/service/RegisterService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/restapi/service/UserAlreadyExistsException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/security/UserDetailsImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/security/UserDetailsServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/security/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/cofinpro/webquizengine/security/WebSecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/de/cofinpro/webquizengine/WebQuizEngineApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/de/cofinpro/webquizengine/WebQuizEngineApplicationTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/de/cofinpro/webquizengine/restapi/controller/ControllerValidationMockMvcTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/de/cofinpro/webquizengine/restapi/controller/ControllerValidationMockMvcTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/de/cofinpro/webquizengine/restapi/controller/RegisterControllerValidatorUnitTest.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -201,6 +180,9 @@
       "h2",
       "postgresql"
     ],
+    "com.intellij.ide.scratch.LRUPopupBuilder$1/": [
+      "PostgreSQL"
+    ],
     "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
       "JAVA"
     ]
@@ -253,7 +235,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.WebQuizEngineApplication">
+  <component name="RunManager" selected="Gradle.WebQuizEngineSecurityTests">
     <configuration default="true" type="DjangoTestsConfigurationType">
       <module name="quizengine" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -274,7 +256,7 @@
       <option name="OPTIONS" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="WebQuizControllerValidatorUnitTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="ControllerValidationMockMvcTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -287,7 +269,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;de.cofinpro.webquizengine.restapi.controller.WebQuizControllerValidatorUnitTest&quot;" />
+            <option value="&quot;de.cofinpro.webquizengine.restapi.controller.ControllerValidationMockMvcTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -298,51 +280,7 @@
       <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
-    <configuration name="WebQuizEngine [check]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="check" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <ForceTestExec>false</ForceTestExec>
-      <method v="2" />
-    </configuration>
-    <configuration name="WebQuizEngine [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="clean" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <ForceTestExec>false</ForceTestExec>
-      <method v="2" />
-    </configuration>
-    <configuration name="WebQuizEngineApplicationTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="ControllerValidationMockMvcTest.createQuizInvalidRequest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -355,7 +293,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;de.cofinpro.webquizengine.WebQuizEngineApplicationTests&quot;" />
+            <option value="&quot;de.cofinpro.webquizengine.restapi.controller.ControllerValidationMockMvcTest.createQuizInvalidRequest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -366,7 +304,7 @@
       <ForceTestExec>true</ForceTestExec>
       <method v="2" />
     </configuration>
-    <configuration name="WebQuizEngineApplicationTests.postApiQuizSolveSuccess" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="WebQuizEngineSecurityTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -379,7 +317,55 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;de.cofinpro.webquizengine.WebQuizEngineApplicationTests.postApiQuizSolveSuccess&quot;" />
+            <option value="&quot;de.cofinpro.webquizengine.security.WebQuizEngineSecurityTests&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>true</ForceTestExec>
+      <method v="2" />
+    </configuration>
+    <configuration name="WebQuizEngineSecurityTests.getApiQuizzesAuthenticated" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;de.cofinpro.webquizengine.security.WebQuizEngineSecurityTests.getApiQuizzesAuthenticated&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>true</ForceTestExec>
+      <method v="2" />
+    </configuration>
+    <configuration name="WebQuizEngineSecurityTests.getApiQuizzesUnauthenticated" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;de.cofinpro.webquizengine.security.WebQuizEngineSecurityTests.getApiQuizzesUnauthenticated&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -532,20 +518,20 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Gradle.WebQuizControllerValidatorUnitTest" />
-      <item itemvalue="Gradle.WebQuizEngine [clean]" />
-      <item itemvalue="Gradle.WebQuizEngineApplicationTests" />
-      <item itemvalue="Gradle.WebQuizEngineApplicationTests.postApiQuizSolveSuccess" />
-      <item itemvalue="Gradle.WebQuizEngine [check]" />
+      <item itemvalue="Gradle.ControllerValidationMockMvcTest" />
+      <item itemvalue="Gradle.ControllerValidationMockMvcTest.createQuizInvalidRequest" />
+      <item itemvalue="Gradle.WebQuizEngineSecurityTests" />
+      <item itemvalue="Gradle.WebQuizEngineSecurityTests.getApiQuizzesAuthenticated" />
+      <item itemvalue="Gradle.WebQuizEngineSecurityTests.getApiQuizzesUnauthenticated" />
       <item itemvalue="Spring Boot.WebQuizEngineApplication" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.WebQuizEngineApplicationTests" />
-        <item itemvalue="Gradle.WebQuizEngineApplicationTests.postApiQuizSolveSuccess" />
-        <item itemvalue="Gradle.WebQuizControllerValidatorUnitTest" />
-        <item itemvalue="Gradle.WebQuizEngine [clean]" />
-        <item itemvalue="Gradle.WebQuizEngine [check]" />
+        <item itemvalue="Gradle.WebQuizEngineSecurityTests" />
+        <item itemvalue="Gradle.WebQuizEngineSecurityTests.getApiQuizzesAuthenticated" />
+        <item itemvalue="Gradle.WebQuizEngineSecurityTests.getApiQuizzesUnauthenticated" />
+        <item itemvalue="Gradle.ControllerValidationMockMvcTest" />
+        <item itemvalue="Gradle.ControllerValidationMockMvcTest.createQuizInvalidRequest" />
       </list>
     </recent_temporary>
   </component>
@@ -714,7 +700,7 @@
       <workItem from="1688315914488" duration="37000" />
       <workItem from="1688466785931" duration="1572000" />
       <workItem from="1688680734781" duration="5722000" />
-      <workItem from="1689364131198" duration="6039000" />
+      <workItem from="1689364131198" duration="9908000" />
     </task>
     <task id="LOCAL-00001" summary="first">
       <created>1646747968606</created>
@@ -1039,7 +1025,15 @@
       <option name="project" value="LOCAL" />
       <updated>1687775644000</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="add oauth2resourceserver and remove user management">
+      <option name="closed" value="true" />
+      <created>1689372797820</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1689372797820</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1074,7 +1068,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="completed stage 5 with all security features - new register endpoint and patch/delete endpoint of owned quizzes" />
     <MESSAGE value="bean validation tests in RestController, different approaches" />
     <MESSAGE value="shutdown-test caused error in build" />
     <MESSAGE value="shutdown-test caused error in build, and added &quot;final&quot; too" />
@@ -1099,7 +1092,8 @@
     <MESSAGE value="delete deprectaed test" />
     <MESSAGE value="Add gradle-wrapper.jar" />
     <MESSAGE value="improve .gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="improve .gitignore" />
+    <MESSAGE value="add oauth2resourceserver and remove user management" />
+    <option name="LAST_COMMIT_MESSAGE" value="add oauth2resourceserver and remove user management" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">

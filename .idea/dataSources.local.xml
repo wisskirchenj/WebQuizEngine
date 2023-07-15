@@ -63,7 +63,10 @@
                 <name qname="public" />
               </node>
             </node>
-            <node kind="database" qname="quiztest">
+            <node kind="database">
+              <name qname="quiztest" />
+              <name qname="recipe" />
+              <name qname="recipetest" />
               <node kind="schema" qname="@" />
             </node>
           </node>
