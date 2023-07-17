@@ -10,6 +10,7 @@ out/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
+.idea/workspace.xml
 .idea/libraries/
 .idea/sonarlint/
 .idea/dataSources/
