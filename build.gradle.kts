@@ -1,10 +1,11 @@
+import org.springframework.boot.gradle.tasks.aot.AbstractAot
 import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 
 plugins {
     java
-    id("org.springframework.boot") version "3.1.5"
-    id("io.spring.dependency-management") version "1.1.3"
-    id("org.graalvm.buildtools.native") version "0.9.28"
+    id("org.springframework.boot") version "3.2.5"
+    id("io.spring.dependency-management") version "1.1.4"
+    id("org.graalvm.buildtools.native") version "0.10.1"
 }
 
 group = "de.cofinpro"
@@ -37,6 +38,10 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testCompileOnly("org.projectlombok:lombok")
     testAnnotationProcessor("org.projectlombok:lombok")
+}
+
+tasks.named<AbstractAot>("processTestAot") {
+    enabled = false
 }
 
 tasks.named<Test>("test") {
